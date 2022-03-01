@@ -1,8 +1,11 @@
 #include "utils.hpp"
 
-Mat read_image(std::string path)
+Mat read_image()
 {
-    Mat image = imread(path);;
+    std::string path="";
+    std::cout<<"Please enter the path for image";
+    std::cin>>path;
+    Mat image = imread(path);
     return image;
 }
 

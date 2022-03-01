@@ -9,10 +9,7 @@ int main(int argc, char** argv )
 {
     // Read image
     Mat image;
-    std::string path="";
-    std::cout<<"Please enter the path for image";
-    std::cin>>path;
-    image = read_image(path);
+    image = read_image();
 
     // split channels     
     Mat chnnels[3];

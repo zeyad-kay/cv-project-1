@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 using namespace cv;
-Mat read_image(std::string path);
+Mat read_image();
 unsigned char normalization(int oldmin,int oldmax,int newmin,int newmax,unsigned char value);
 std::vector<unsigned char> vectorizzation(Mat image);
 unsigned char ** mat_to_2d(Mat image);
