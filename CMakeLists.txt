@@ -11,7 +11,7 @@ include_directories(
         ${PROJECT_SOURCE_DIR}/src
 )
 
-file(GLOB ALL_SRCS
+file(GLOB ALL_SRCS CONFIGURE_DEPENDS
         "${PROJECT_SOURCE_DIR}/include/*.h"
         "${PROJECT_SOURCE_DIR}/include/*.hpp"
         "${PROJECT_SOURCE_DIR}/src/*.cpp"
