@@ -3,25 +3,36 @@
 
 #include <vector>
 #include <numeric>
-
+#include <iostream>
 template <typename T>
 class cvector : public std::vector<T>
 {
 public:
     using std::vector<T>::vector;
-    cvector<T> operator+(std::vector<T> const v) const;
-    cvector<T> operator+(T const value) const;
-    cvector<T> operator-(std::vector<T> const v) const;
-    cvector<T> operator-(T const value) const;
-    cvector<T> operator*(std::vector<T> const v) const;
-    cvector<T> operator*(T const value) const;
-    cvector<T> operator/(std::vector<T> const v) const;
-    cvector<T> operator/(T const value) const;
-    T dot(cvector<T> const v) const;
+    cvector<T> operator+(const cvector<T> &v) const;
+    cvector<T> operator+(const T value) const;
+    cvector<T> operator-(const cvector<T> &v) const;
+    cvector<T> operator-(const T value) const;
+    cvector<T> operator*(const cvector<T> &v) const;
+    cvector<T> operator*(const T value) const;
+    cvector<T> operator/(const cvector<T> &v) const;
+    cvector<T> operator/(const T value) const;
+    T dot(const cvector<T> &v) const;
+    cvector<T> range(const size_t start_row, const size_t end_row, const size_t start_col, const size_t end_col) const;
+    friend std::ostream &operator<<(std::ostream &os, const cvector<T> &v)
+    {
+        os << "{ ";
+        for (auto itr = v.begin(); itr != v.end(); itr++)
+        {
+            os << *itr << " ";
+        }
+        os << "}";
+        return os;
+    }
 };
 
 template <typename T>
-cvector<T> cvector<T>::operator+(std::vector<T> const v) const
+cvector<T> cvector<T>::operator+(const cvector<T> &v) const
 {
     if (this->size() != v.size())
     {
@@ -36,7 +47,7 @@ cvector<T> cvector<T>::operator+(std::vector<T> const v) const
 }
 
 template <typename T>
-cvector<T> cvector<T>::operator+(T const value) const
+cvector<T> cvector<T>::operator+(const T value) const
 {
     cvector<T> vect;
     for (auto itr = this->begin(); itr != this->end(); itr++)
@@ -47,7 +58,7 @@ cvector<T> cvector<T>::operator+(T const value) const
 }
 
 template <typename T>
-cvector<T> cvector<T>::operator-(std::vector<T> const v) const
+cvector<T> cvector<T>::operator-(const cvector<T> &v) const
 {
     if (this->size() != v.size())
     {
@@ -62,13 +73,13 @@ cvector<T> cvector<T>::operator-(std::vector<T> const v) const
 }
 
 template <typename T>
-cvector<T> cvector<T>::operator-(T const value) const
+cvector<T> cvector<T>::operator-(const T value) const
 {
     return this->operator+(-value);
 }
 
 template <typename T>
-cvector<T> cvector<T>::operator*(std::vector<T> const v) const
+cvector<T> cvector<T>::operator*(const cvector<T> &v) const
 {
     if (this->size() != v.size())
     {
@@ -83,7 +94,7 @@ cvector<T> cvector<T>::operator*(std::vector<T> const v) const
 }
 
 template <typename T>
-cvector<T> cvector<T>::operator*(T const value) const
+cvector<T> cvector<T>::operator*(const T value) const
 {
     cvector<T> vect;
     for (auto itr = this->begin(); itr != this->end(); itr++)
@@ -94,7 +105,7 @@ cvector<T> cvector<T>::operator*(T const value) const
 }
 
 template <typename T>
-cvector<T> cvector<T>::operator/(std::vector<T> const v) const
+cvector<T> cvector<T>::operator/(const cvector<T> &v) const
 {
     if (this->size() != v.size())
     {
@@ -109,13 +120,13 @@ cvector<T> cvector<T>::operator/(std::vector<T> const v) const
 }
 
 template <typename T>
-cvector<T> cvector<T>::operator/(T const value) const
+cvector<T> cvector<T>::operator/(const T value) const
 {
     return this->operator*(1 / value);
 }
 
 template <typename T>
-T cvector<T>::dot(cvector<T> const v) const
+T cvector<T>::dot(const cvector<T> &v) const
 {
     if (this->size() != v.size())
     {
@@ -129,4 +140,19 @@ T cvector<T>::dot(cvector<T> const v) const
     return sum;
 }
 
+template <typename T>
+cvector<T> cvector<T>::range(const size_t start_row, const size_t end_row, const size_t start_col, const size_t end_col) const
+{
+    cvector<T> v;
+    for (size_t i = start_row; i < end_row; i++)
+    {
+        T row;
+        for (size_t j = start_col; j < end_col; j++)
+        {
+            row.push_back(this->operator[](i)[j]);
+        }
+        v.push_back(row);
+    }
+    return v;
+}
 #endif
