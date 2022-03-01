@@ -117,9 +117,16 @@ cvector<T> cvector<T>::operator/(T const value) const
 template <typename T>
 T cvector<T>::dot(cvector<T> const v) const
 {
+    if (this->size() != v.size())
+    {
+        throw "Vectors must have the same size";
+    }
     T sum = 0;
-    auto res = this->operator*(v);
-    return std::accumulate(res.begin(), res.end(), sum);
+    for (size_t i = 0; i < this->size(); i++)
+    {
+        sum += this->operator[](i) * v[i];
+    }
+    return sum;
 }
 
 #endif
