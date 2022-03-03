@@ -5,7 +5,8 @@
 #include <iostream>
 #include <string>
 #include "utils.hpp"
+#include "cvector.hpp"
 using namespace cv;
-void normalize_image(std::vector<uchar>array,int newmin,int newmax);
+void normalize_image(cvector<uchar>array,int newmin,int newmax);
 
 #endif

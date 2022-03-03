@@ -3,6 +3,7 @@
 #include <iostream>
 #include "utils.hpp"
 #include "tasks.hpp"
+#include "cvector.hpp"
 using namespace cv;
 
 int main(int argc, char** argv )
@@ -19,10 +20,41 @@ int main(int argc, char** argv )
     Mat r = chnnels[2];//loading red channels//  
 
     // vectorization
-    std::vector<unsigned char> array =vectorizzation(image);
+    cvector<unsigned char> array =vectorizzation(image);
 
     // Normalization Task
     normalize_image(array,100,255);
 
+    // 2d vectorization
+    /*
+    auto N = 3;	// num of rows
+    auto M = 3; // num of cols in each row
+    auto default_value = 1; // default value of all int elements
+    cvector<cvector<int>> matrix(N, cvector<int>(M, default_value));
+    cvector<int>temp(9,0);  //1d vector 
+      temp[0] = 1;
+      temp[1] = 2;
+      temp[2] = 3;
+      temp[3] = 4;
+      temp[4] = 5;
+      temp[5] = 6;
+      temp[6] = 7;
+      temp[7] = 8;
+    vectorization_2d(N,M, temp,matrix);
+    */
         return 0;
 }
+
+
+
+    // print 2d vector
+    /*
+      for (int i = 0; i < N; i++)
+      {
+          for (int j = 0; j <M; j++)
+          {
+            std::cout << matrix[i][j] << " ";
+          }
+          std::cout << std::endl;
+      }
+      */

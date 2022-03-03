@@ -1,6 +1,6 @@
 #include"tasks.hpp"
-
-void normalize_image(std::vector<uchar>array,int newmin,int newmax)
+#include"cvector.hpp"
+void normalize_image(cvector<uchar>array,int newmin,int newmax)
 {
         int oldmin= int(*min_element(array.begin(), array.end()));
         int oldmax= int(*max_element(array.begin(), array.end()));

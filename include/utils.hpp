@@ -4,9 +4,10 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
+#include "cvector.hpp"
 using namespace cv;
 Mat read_image();
 unsigned char normalization(int oldmin,int oldmax,int newmin,int newmax,unsigned char value);
-std::vector<unsigned char> vectorizzation(Mat image);
-unsigned char ** mat_to_2d(Mat image);
+cvector<unsigned char> vectorizzation(Mat image);
+void vectorization_2d(int m,int n,cvector<int> temp, cvector< cvector<int> >& matrix);
 #endif
