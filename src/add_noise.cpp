@@ -1,12 +1,9 @@
 #include "add_noise.hpp"
-#include <opencv2/opencv.hpp>
-#include <random>
 
-    img::Image add_noise(img::Image source , char type ,uchar noise_factor){
+    img::Image add_noise(img::Image source , std::string type ,uchar noise_factor){
 
     cv::Mat source_mat = source.mat.clone();
 
-    img::Image noisy_image;
     std::default_random_engine generator;
     std::normal_distribution<double> gauss_random(0, 1);
     std::uniform_real_distribution<double> uniform_random(-1,1);
@@ -20,17 +17,17 @@
     
     for(int row=0;row<rows_number;row++){
     for(int col=0;col<cols_number;col++){
-        if(type == 'G'){
+        if(type == "Gaussian"){
             noise = gauss_random(generator)*noise_factor;
         }
-        else if(type == 'U'){
+        else if(type == "Uniform"){
             noise = uniform_random(generator)*noise_factor;
         }
-        else if(type == 'S'){
+        else if(type == "Salt"){
             random_salt = sp_random(generator) ;
         }
         for(int ch=0;ch<channels_number;ch++){
-            if (type == 'S'){
+            if (type == "Salt"){
                 if(random_salt<noise_factor){
                     source_mat.at<cv::Vec3b>(row,col)[ch] =  0;
                     }

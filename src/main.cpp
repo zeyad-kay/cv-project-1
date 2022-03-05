@@ -4,6 +4,7 @@
 #include "Image.hpp"
 #include "cvector.hpp"
 #include "add_noise.hpp"
+#include "noise_filters.hpp"
 
 
 
@@ -13,12 +14,16 @@ using namespace img;
 int main(int argc, char **argv)
 {
   // Read image
-  Image image = Image("H:/cv-project-1/y.jpg");
-  // image.mat.at<cv::Vec3b>(0,0)[0] = 6;
-  // std::cout << image.mat.at<cv::Vec3b>(0,0) << image.mat.at<cv::Vec3b>(0,1);
-  Image noisy = add_noise(image,'S',5);
-  noisy.display();
-  image.display();
+  Image image = Image("H:/cv-project-1/lenna.png");
+
+  Image noisy = add_noise(image,"Salt",5);
+
+  Image filtered = noise_filter(noisy,3,"Median");
+
+  image.display("image");
+  noisy.display("noisy");
+  filtered.display("filtered");
+  
   // cvector<int> mask = {1, 2, 3, 4};
 
   // std::cout << mask << "\n";

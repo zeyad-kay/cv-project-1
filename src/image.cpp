@@ -24,10 +24,10 @@ namespace img
         this->vectorize();
     }
 
-    void Image::display() const
+    void Image::display(std::string txt) const
     {
-        cv::namedWindow("Display Image", cv::WINDOW_AUTOSIZE);
-        cv::imshow("Display Image", this->mat);
+        cv::namedWindow(txt, cv::WINDOW_AUTOSIZE);
+        cv::imshow(txt, this->mat);
         cv::waitKey(0);
     }
 

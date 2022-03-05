@@ -16,7 +16,7 @@ namespace img
             Image(std::string path);
             Image(cv::Mat mat);
             Image(cvector<uchar> pixels, size_t rows, size_t cols, int type);
-            void display() const;
+            void display(std::string txt) const;
             void vectorize();
             cvector<cvector<uchar>> Image::to_2d() const;
     };
