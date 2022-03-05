@@ -16,15 +16,18 @@ namespace img
             Image(std::string path);
             Image(cv::Mat mat);
             Image(cvector<uchar> pixels, size_t rows, size_t cols, int type);
-            void display() const;
+            void display(std::string title) const;
             void vectorize();
-            cvector<cvector<uchar>> Image::to_2d() const;
     };
-    Image filter(const Image &img, cvector<cvector<uchar>> mask);
+    cvector<double> filter(const Image &img, cvector<cvector<double>> mask);
     Image merge(const cvector<Image> &imgs);
     Image convert(const Image &img, std::string from, std::string to);
     cvector<Image> split(const Image &img);
-    Image normalize(Image &img, int min, int max);
+    cvector<uchar> normalize(cvector<double> &pixels, double min, double max);
+    Image sobel(const Image &img, bool dx = true, bool dy = true);
+    Image prewitt(const Image &img, bool dx = true, bool dy = true);
+    Image roberts(const Image &img, bool dx = true, bool dy = true);
+    cvector<uchar> scale(cvector<double> pixels);
 };
 
 #endif

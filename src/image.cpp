@@ -24,11 +24,10 @@ namespace img
         this->vectorize();
     }
 
-    void Image::display() const
+    void Image::display(std::string title) const
     {
-        cv::namedWindow("Display Image", cv::WINDOW_AUTOSIZE);
-        cv::imshow("Display Image", this->mat);
-        cv::waitKey(0);
+        cv::namedWindow(title, cv::WINDOW_AUTOSIZE);
+        cv::imshow(title, this->mat);
     }
 
     void Image::vectorize()
@@ -46,34 +45,24 @@ namespace img
         }
     }
 
-    cvector<cvector<uchar>> Image::to_2d() const
+    cvector<double> filter(const Image &img, cvector<cvector<double>> mask)
     {
-        cvector<cvector<uchar>> matrix(this->mat.rows, cvector<uchar>(this->mat.cols));
-        for (int i = 0; i < this->mat.rows; i++)
-        {
-            for (int j = 0; j < this->mat.cols; j++)
-            {
-                matrix[i][j] = this->pixels[j + (this->mat.cols * i)];
-            }
-        }
-        return matrix;
-    }
-
-    Image filter(const Image &img, cvector<cvector<uchar>> mask)
-    {
-        cvector<uchar> fltr;
-        cvector<cvector<uchar>> mtrx = img.to_2d();
-        size_t img_rows = mtrx.size();
-        size_t img_cols = mtrx[0].size();
+        size_t img_rows = img.mat.rows;
+        size_t img_cols = img.mat.cols;
         size_t mask_rows = mask.size();
         size_t mask_cols = mask[0].size();
+
+        // convert uchar to int to handle -ve values
+        cvector<double> fltr(img.pixels.begin(), img.pixels.end());
+        cvector<cvector<double>> mtrx = fltr.to_2d(img_rows, img_cols);
+        fltr.clear();
 
         for (size_t row = 0; row < (img_rows - mask_rows + 1); row++)
         {
             for (size_t col = 0; col < (img_cols - mask_cols + 1); col++)
             {
-                cvector<cvector<uchar>> sub = mtrx.range(row, row + mask_rows, col, col + mask_cols);
-                int px = 0;
+                cvector<cvector<double>> sub = mtrx.range(row, row + mask_rows, col, col + mask_cols);
+                double px = 0;
                 for (size_t mask_row = 0; mask_row < mask_rows; mask_row++)
                 {
                     px += sub[mask_row].dot(mask[mask_row]);
@@ -81,7 +70,7 @@ namespace img
                 fltr.push_back(px);
             }
         }
-        return Image(fltr, (img_rows - mask_rows + 1), (img_cols - mask_cols + 1), img.mat.type());
+        return fltr;
     }
 
     Image normalize(Image &img, int min, int max)
@@ -129,7 +118,6 @@ namespace img
         return Image(dest);
     }
 
-
     cvector<Image> split(const Image &img)
     {
         cv::Mat channels[3];
@@ -146,4 +134,104 @@ namespace img
         return Image(merged);
     }
 
+    Image sobel(const Image &img, bool dx, bool dy)
+    {
+        if (!dx && !dy)
+        {
+            throw "Must set dx or dy or both";
+        }
+        cvector<cvector<double>> x = {
+            {-1, 0, 1},
+            {-2, 0, 2},
+            {-1, 0, 1},
+        };
+        cvector<cvector<double>> y = {
+            {1, 2, 1},
+            {0, 0, 0},
+            {-1, -2, -1},
+        };
+        
+        size_t dim = (img.mat.rows - 3 + 1) * (img.mat.cols - 3 + 1);
+        cvector<double> gx(dim, 0);
+        cvector<double> gy(dim, 0);
+        if (dx)
+        {
+            gx = filter(img, x);
+        }
+        if (dy)
+        {
+            gy = filter(img, y);
+        }
+        cvector<uchar> res = scale(cvector<double>::mag(gx, gy));
+        return Image(res, img.mat.rows - 3 + 1, img.mat.cols - 3 + 1, img.mat.type());
+    }
+
+    Image prewitt(const Image &img, bool dx, bool dy)
+    {
+        cvector<cvector<double>> x = {
+            {1, 0, -1},
+            {1, 0, -1},
+            {1, 0, -1},
+        };
+        cvector<cvector<double>> y = {
+            {1, 1, 1},
+            {0, 0, 0},
+            {-1, -1, -1},
+        };
+
+        size_t dim = (img.mat.rows - 3 + 1) * (img.mat.cols - 3 + 1);
+        cvector<double> gx(dim, 0);
+        cvector<double> gy(dim, 0);
+        if (dx)
+        {
+            gx = filter(img, x);
+        }
+        if (dy)
+        {
+            gy = filter(img, y);
+        }
+        cvector<uchar> res = scale(cvector<double>::mag(gx, gy));
+        return Image(res, img.mat.rows - 3 + 1, img.mat.cols - 3 + 1, img.mat.type());
+    }
+
+    Image roberts(const Image &img, bool dx, bool dy)
+    {
+        if (!dx && !dy)
+        {
+            throw "Must set dx or dy or both";
+        }
+        cvector<cvector<double>> x = {
+            {1, 0},
+            {0, -1},
+        };
+        cvector<cvector<double>> y = {
+            {0, 1},
+            {-1, 0},
+        };
+        size_t dim = (img.mat.rows - 2 + 1) * (img.mat.cols - 2 + 1);
+        cvector<double> gx(dim, 0);
+        cvector<double> gy(dim, 0);
+        if (dx)
+        {
+            gx = filter(img, x);
+        }
+        if (dy)
+        {
+            gy = filter(img, y);
+        }
+        cvector<uchar> res = scale(cvector<double>::mag(gx, gy));
+        return Image(res, img.mat.rows - 2 + 1, img.mat.cols - 2 + 1, img.mat.type());
+    }
+
+    cvector<uchar> scale(cvector<double> pixels)
+    {
+        pixels = pixels.abs();
+        cvector<uchar> res;
+        double scaled = (255.0 / pixels.max());
+        for (auto itr = pixels.begin(); itr != pixels.end(); itr++)
+        {
+            res.push_back((uchar)std::round((*itr) * scaled));
+        }
+        return res;
+    }
 }

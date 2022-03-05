@@ -4,6 +4,8 @@
 #include <vector>
 #include <numeric>
 #include <iostream>
+#include <algorithm>
+
 template <typename T>
 class cvector : public std::vector<T>
 {
@@ -18,7 +20,12 @@ public:
     cvector<T> operator/(const cvector<T> &v) const;
     cvector<T> operator/(const T value) const;
     T dot(const cvector<T> &v) const;
+    T max() const;
+    T min() const;
+    cvector<T> abs() const;
+    static cvector<T> mag(cvector<T> x, cvector<T> y);
     cvector<T> range(const size_t start_row, const size_t end_row, const size_t start_col, const size_t end_col) const;
+    cvector<cvector<T>> to_2d(size_t rows, size_t cols) const;
     friend std::ostream &operator<<(std::ostream &os, const cvector<T> &v)
     {
         os << "{ ";
@@ -155,4 +162,57 @@ cvector<T> cvector<T>::range(const size_t start_row, const size_t end_row, const
     }
     return v;
 }
+
+template <typename T>
+cvector<cvector<T>> cvector<T>::to_2d(size_t rows, size_t cols) const
+{
+    cvector<cvector<T>> matrix(rows, cvector<T>(cols));
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            matrix[i][j] = this->operator[](j + (cols * i));
+        }
+    }
+    return matrix;
+}
+
+template <typename T>
+cvector<T> cvector<T>::abs() const
+{
+    cvector<T> vect;
+    for (auto itr = this->begin(); itr != this->end(); itr++)
+    {
+        vect.push_back(std::abs(*itr));
+    }
+    return vect;
+}
+
+template<typename T>
+T cvector<T>::max() const
+{
+    return *std::max_element(this->begin(), this->end());
+}
+
+template<typename T>
+T cvector<T>::min() const
+{
+    return *std::min_element(this->begin(), this->end());
+}
+
+template<typename T>
+cvector<T> cvector<T>::mag(cvector<T> x, cvector<T> y)
+{
+    if (x.size() != y.size())
+    {
+        throw "Vectors must have the same size";
+    }
+    cvector<T> v;
+    for (int i = 0; i < x.size();i++)
+    {
+        v.push_back(std::sqrt(x[i] * x[i] + y[i] * y[i]));
+    }
+    return v;
+}
+
 #endif
