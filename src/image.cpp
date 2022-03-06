@@ -150,7 +150,7 @@ namespace img
             {0, 0, 0},
             {-1, -2, -1},
         };
-        
+
         size_t dim = (img.mat.rows - 3 + 1) * (img.mat.cols - 3 + 1);
         cvector<double> gx(dim, 0);
         cvector<double> gy(dim, 0);
@@ -221,6 +221,53 @@ namespace img
         }
         cvector<uchar> res = scale(cvector<double>::mag(gx, gy));
         return Image(res, img.mat.rows - 2 + 1, img.mat.cols - 2 + 1, img.mat.type());
+    }
+
+    Image canny(const Image &img, double threshold1, double threshold2)
+    {
+        if (!threshold1 || !threshold2)
+        {
+            throw "Must specify thresholds 1 and 2";
+        }
+        double max = std::max(threshold1, threshold2);
+        double min = std::min(threshold1, threshold2);
+        Image s = sobel(img, 1, 1);
+
+        cvector<cvector<uchar>> mtrx = img.pixels.to_2d(img.mat.rows, img.mat.cols);
+        cvector<uchar> pxs;
+        for (int row = 0; row < mtrx.size(); row++)
+        {
+            for (int col = 0; col < mtrx[0].size(); col++)
+            {
+                if (strong_pixel(mtrx, row, col, min, max))
+                {
+                    pxs.push_back(mtrx[row][col]);
+                }
+                else
+                {
+                    pxs.push_back(0);
+                }
+            }
+        }
+        return Image(pxs, img.mat.rows, img.mat.cols, img.mat.type());
+    }
+
+    bool strong_pixel(cvector<cvector<uchar>> &mtrx, size_t row, size_t col, double min, double max)
+    {
+        if (mtrx[row][col] < min)
+            return false;
+        if (mtrx[row][col] >= max)
+            return true;
+        cvector<cvector<uchar>> sub = mtrx.range(row - 1, row + 2, col - 1, col + 2);
+        for (int i = 0; i < sub.size(); i++)
+        {
+            for (int j = 0; j < sub[0].size(); j++)
+            {
+                if (sub[i][j] >= max)
+                    return true;
+            }
+        }
+        return false;
     }
 
     cvector<uchar> scale(cvector<double> pixels)

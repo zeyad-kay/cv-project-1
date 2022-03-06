@@ -24,7 +24,7 @@ public:
     T min() const;
     cvector<T> abs() const;
     static cvector<T> mag(cvector<T> x, cvector<T> y);
-    cvector<T> range(const size_t start_row, const size_t end_row, const size_t start_col, const size_t end_col) const;
+    cvector<T> range(int start_row, int end_row, int start_col, int end_col) const;
     cvector<cvector<T>> to_2d(size_t rows, size_t cols) const;
     friend std::ostream &operator<<(std::ostream &os, const cvector<T> &v)
     {
@@ -148,13 +148,17 @@ T cvector<T>::dot(const cvector<T> &v) const
 }
 
 template <typename T>
-cvector<T> cvector<T>::range(const size_t start_row, const size_t end_row, const size_t start_col, const size_t end_col) const
+cvector<T> cvector<T>::range(int start_row, int end_row, int start_col, int end_col) const
 {
+    start_row = start_row < 0 ? 0 : start_row;
+    start_col = start_col < 0 ? 0 : start_col;
+    end_row = end_row > this->size() ? this->size() : end_row;
+    end_col = end_col > this->operator[](0).size() ? this->operator[](0).size() : end_col;
     cvector<T> v;
-    for (size_t i = start_row; i < end_row; i++)
+    for (int i = start_row; i < end_row; i++)
     {
         T row;
-        for (size_t j = start_col; j < end_col; j++)
+        for (int j = start_col; j < end_col; j++)
         {
             row.push_back(this->operator[](i)[j]);
         }

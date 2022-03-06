@@ -27,7 +27,10 @@ namespace img
     Image sobel(const Image &img, bool dx = true, bool dy = true);
     Image prewitt(const Image &img, bool dx = true, bool dy = true);
     Image roberts(const Image &img, bool dx = true, bool dy = true);
+    Image canny(const Image &img, double threshold1, double threshold2);
     cvector<uchar> scale(cvector<double> pixels);
+    bool strong_pixel(cvector<cvector<uchar>> &mtrx, size_t row, size_t col, double min, double max);
+
 };
 
 #endif
