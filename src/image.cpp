@@ -2,6 +2,8 @@
 #include "image.hpp"
 #include "utils.hpp"
 #include <opencv2/opencv.hpp>
+#include <random>
+
 
 namespace img
 {
@@ -280,5 +282,142 @@ namespace img
             res.push_back((uchar)std::round((*itr) * scaled));
         }
         return res;
+    }
+
+    Image noise_filter(Image &source, int size, std::string type, double std)
+    {
+        cvector<cvector<double>> filter = gaussian_kernel(size, std);
+        double pixel_value = 0;
+        int limit = size - 1;
+        cvector<uchar> sub_matrix;
+        cv::Mat source_mat = source.mat.clone();
+        int channels_number = source_mat.channels();
+        int cols_number = source_mat.cols;
+        int rows_number = source_mat.rows;
+        for (int src_row = 0; src_row < rows_number - limit; src_row++)
+        {
+            for (int src_col = 0; src_col < cols_number - limit; src_col++)
+            {
+                for (int ch = 0; ch < channels_number; ch++)
+                {
+                    for (int flt_row = 0; flt_row < size; flt_row++)
+                    {
+                        for (int flt_col = 0; flt_col < size; flt_col++)
+                        {
+
+                            if (type == "Gaussian")
+                            {
+                                pixel_value += source_mat.at<cv::Vec3b>(src_row + flt_row, src_col + flt_col)[ch] * filter[flt_row][flt_col];
+                            }
+                            else if (type == "Mean" || type == "Median")
+                            {
+                                sub_matrix.push_back(source_mat.at<cv::Vec3b>(src_row + flt_row, src_col + flt_col)[ch]);
+                            }
+                        }
+                    }
+
+                    if (type == "Gaussian")
+                    {
+                        source_mat.at<cv::Vec3b>(src_row, src_col)[ch] = (uchar)pixel_value;
+                        pixel_value = 0;
+                    }
+                    else if (type == "Mean")
+                    {
+                        source_mat.at<cv::Vec3b>(src_row, src_col)[ch] = sub_matrix.mean();
+                        sub_matrix.clear();
+                    }
+                    else if (type == "Median")
+                    {
+                        source_mat.at<cv::Vec3b>(src_row, src_col)[ch] = sub_matrix.median();
+                        sub_matrix.clear();
+                    }
+                }
+            }
+        }
+        return Image(source_mat.colRange(0, cols_number - limit).rowRange(0, rows_number - limit));
+    }
+
+    Image add_noise(Image &source, std::string type, uchar noise_factor)
+    {
+
+        cv::Mat source_mat = source.mat.clone();
+
+        std::default_random_engine generator;
+        std::normal_distribution<double> gauss_random(0, 1);
+        std::uniform_real_distribution<double> uniform_random(-1, 1);
+        std::uniform_int_distribution<int> sp_random(0, 100);
+
+        int channels_number = source_mat.channels();
+        int cols_number = source_mat.cols;
+        int rows_number = source_mat.rows;
+        double noise = 0.f;
+        int random_salt;
+
+        for (int row = 0; row < rows_number; row++)
+        {
+            for (int col = 0; col < cols_number; col++)
+            {
+                if (type == "Gaussian")
+                {
+                    noise = gauss_random(generator) * noise_factor;
+                }
+                else if (type == "Uniform")
+                {
+                    noise = uniform_random(generator) * noise_factor;
+                }
+                else if (type == "Salt")
+                {
+                    random_salt = sp_random(generator);
+                }
+                for (int ch = 0; ch < channels_number; ch++)
+                {
+                    if (type == "Salt")
+                    {
+                        if (random_salt < noise_factor)
+                        {
+                            source_mat.at<cv::Vec3b>(row, col)[ch] = 0;
+                        }
+                        else if (random_salt > (100 - noise_factor))
+                        {
+                            source_mat.at<cv::Vec3b>(row, col)[ch] = 255;
+                        }
+                    }
+                    else
+                    {
+                        source_mat.at<cv::Vec3b>(row, col)[ch] += (uchar)noise;
+                    }
+                }
+            }
+        }
+        return Image(source_mat);
+    }
+
+    void histogram_equalization(Image &eq_img)
+    {
+        int hist[256] = {0};
+        Image equalized = eq_img.mat.clone();
+        Image hsv = convert(equalized, "bgr", "hsv");
+        cvector<Image> splt = split(hsv);
+        for (int i = 0; i < equalized.mat.rows * equalized.mat.cols; i++)
+            hist[(int)(splt[2].pixels[i])] = hist[(int)(splt[2].pixels[i])] + 1;
+        int sum = 0;
+        int pdf[256] = {0};
+        int map[256] = {0};
+        for (int i = 0; i < 256; i++)
+        {
+            sum = sum + hist[i];
+            pdf[i] = sum;
+        }
+        for (int i = 0; i < 256; i++)
+        {
+            map[i] = (int)((pdf[i] - pdf[0] - 0.f) * 255 / (pdf[255] - pdf[0]));
+        }
+
+        for (int i = 0; i < equalized.mat.rows * equalized.mat.cols; i++)
+            splt[2].mat.data[i] = map[(int)(splt[2].pixels[i])];
+
+        Image merged = merge(splt);
+        Image bgr = convert(merged, "hsv", "bgr");
+        bgr.display("Equalized Image");
     }
 }
