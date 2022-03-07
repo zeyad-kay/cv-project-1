@@ -1,34 +1,88 @@
-// #include "image.hpp"
 #include "cvector.hpp"
+#include "image.hpp"
+#include "utils.hpp"
+#include <opencv2/opencv.hpp>
 
 namespace img
 {
-    cvector<cvector<int>> filter(cvector<cvector<int>> img, cvector<cvector<int>> mask)
+    Image::Image(std::string path)
     {
-        cvector<cvector<int>> fltr;
-        size_t img_rows = img.size();
-        size_t img_cols = img[0].size();
+        this->mat = cv::imread(path);
+        this->vectorize();
+    }
+
+    Image::Image(cvector<uchar> pixels, size_t rows, size_t cols, int type)
+    {
+        this->mat = cv::Mat(rows, cols, type);
+        memcpy(this->mat.data, pixels.data(), pixels.size() * sizeof(unsigned char));
+        this->pixels = pixels;
+    }
+
+    Image::Image(cv::Mat mat)
+    {
+        this->mat = mat;
+        this->vectorize();
+    }
+
+    void Image::display() const
+    {
+        cv::namedWindow("Display Image", cv::WINDOW_AUTOSIZE);
+        cv::imshow("Display Image", this->mat);
+        cv::waitKey(0);
+    }
+
+    void Image::vectorize()
+    {
+        if (this->mat.isContinuous())
+        {
+            this->pixels.assign((unsigned char *)this->mat.datastart, (unsigned char *)this->mat.dataend);
+        }
+        else
+        {
+            for (int i = 0; i < this->mat.rows; ++i)
+            {
+                this->pixels.insert(this->pixels.end(), this->mat.ptr<unsigned char>(i), this->mat.ptr<unsigned char>(i) + this->mat.cols);
+            }
+        }
+    }
+
+    cvector<cvector<uchar>> Image::to_2d() const
+    {
+        cvector<cvector<uchar>> matrix(this->mat.rows, cvector<uchar>(this->mat.cols));
+        for (int i = 0; i < this->mat.rows; i++)
+        {
+            for (int j = 0; j < this->mat.cols; j++)
+            {
+                matrix[i][j] = this->pixels[j + (this->mat.cols * i)];
+            }
+        }
+        return matrix;
+    }
+
+    Image filter(const Image &img, cvector<cvector<uchar>> mask)
+    {
+        cvector<uchar> fltr;
+        cvector<cvector<uchar>> mtrx = img.to_2d();
+        size_t img_rows = mtrx.size();
+        size_t img_cols = mtrx[0].size();
         size_t mask_rows = mask.size();
         size_t mask_cols = mask[0].size();
+
         for (size_t row = 0; row < (img_rows - mask_rows + 1); row++)
         {
-            cvector<int> row_px;
             for (size_t col = 0; col < (img_cols - mask_cols + 1); col++)
             {
-                cvector<cvector<int>> sub = img.range(row, row + mask_rows, col, col + mask_cols);
+                cvector<cvector<uchar>> sub = mtrx.range(row, row + mask_rows, col, col + mask_cols);
                 int px = 0;
                 for (size_t mask_row = 0; mask_row < mask_rows; mask_row++)
                 {
                     px += sub[mask_row].dot(mask[mask_row]);
                 }
-                row_px.push_back(px);
+                fltr.push_back(px);
             }
-            fltr.push_back(row_px);
         }
-        return fltr;
+        return Image(fltr, (img_rows - mask_rows + 1), (img_cols - mask_cols + 1), img.mat.type());
     }
-<<<<<<< Updated upstream
-=======
 
     Image normalize(Image &img, int min, int max)
     {
@@ -75,7 +129,6 @@ namespace img
         return Image(dest);
     }
 
-
     cvector<Image> split(const Image &img)
     {
         cv::Mat channels[3];
@@ -94,36 +147,32 @@ namespace img
 
     void histogram_equalization(Image eq_img)
     {
-        int hist [256]={0};
+        int hist[256] = {0};
         Image equalized = eq_img.mat.clone();
         Image hsv = convert(equalized, "bgr", "hsv");
         cvector<Image> splt = split(hsv);
         for (int i = 0; i < equalized.mat.rows * equalized.mat.cols; i++)
-          hist[(int)(splt[2].pixels[i])] = hist[(int)(splt[2].pixels[i])] +1;
-        int sum=0;
-        int pdf [256]={0};
-        int map [256]={0};
+            hist[(int)(splt[2].pixels[i])] = hist[(int)(splt[2].pixels[i])] + 1;
+        int sum = 0;
+        int pdf[256] = {0};
+        int map[256] = {0};
         for (int i = 0; i < 256; i++)
         {
-        sum= sum +hist[i];
-        pdf[i]=sum;
+            sum = sum + hist[i];
+            pdf[i] = sum;
         }
         for (int i = 0; i < 256; i++)
         {
-        map[i]=(int)((pdf[i]-pdf[0]-0.f)*255/(pdf[255]-pdf[0]));
+            map[i] = (int)((pdf[i] - pdf[0] - 0.f) * 255 / (pdf[255] - pdf[0]));
         }
-            for (int i = 0; i < 256; i++)
+        for (int i = 0; i < 256; i++)
         {
-        std::cout<<map[i]<<std::endl;
+            std::cout << map[i] << std::endl;
         }
         for (int i = 0; i < equalized.mat.rows * equalized.mat.cols; i++)
-            splt[2].mat.data[i] =map[(int)(splt[2].pixels[i])];
+            splt[2].mat.data[i] = map[(int)(splt[2].pixels[i])];
         Image merged = merge(splt);
         Image bgr = convert(merged, "hsv", "bgr");
         bgr.display();
-
     }
-
-
->>>>>>> Stashed changes
 }
