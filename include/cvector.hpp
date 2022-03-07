@@ -19,6 +19,9 @@ public:
     cvector<T> operator/(const T value) const;
     T dot(const cvector<T> &v) const;
     cvector<T> range(const size_t start_row, const size_t end_row, const size_t start_col, const size_t end_col) const;
+    int mean(void) const;
+    int median(void);
+
     friend std::ostream &operator<<(std::ostream &os, const cvector<T> &v)
     {
         os << "{ ";
@@ -155,4 +158,26 @@ cvector<T> cvector<T>::range(const size_t start_row, const size_t end_row, const
     }
     return v;
 }
+
+template <typename T>
+int cvector<T>::mean(void) const
+{
+    double mean_value = 0 ;
+    for (size_t i = 0; i < this->size(); i++)
+    {
+            mean_value += this->operator[](i);
+    }
+    mean_value = (mean_value/this->size());
+    return (int) mean_value;
+}
+
+template <typename T> 
+int cvector<T>::median(void)
+{   int median;
+    size_t n = this->size() / 2;
+    std::nth_element(this->begin(), this->begin()+n, this->end());
+    median = this->operator[](n);
+    return median;
+}
+
 #endif
