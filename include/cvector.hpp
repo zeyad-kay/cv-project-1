@@ -26,9 +26,8 @@ public:
     static cvector<T> mag(cvector<T> x, cvector<T> y);
     cvector<T> range(int start_row, int end_row, int start_col, int end_col) const;
     cvector<cvector<T>> to_2d(size_t rows, size_t cols) const;
-    cvector<T> range(const size_t start_row, const size_t end_row, const size_t start_col, const size_t end_col) const;
-    int mean(void) const;
-    int median(void);
+    T mean() const;
+    T median() const;
 
     friend std::ostream &operator<<(std::ostream &os, const cvector<T> &v)
     {
@@ -196,19 +195,19 @@ cvector<T> cvector<T>::abs() const
     return vect;
 }
 
-template<typename T>
+template <typename T>
 T cvector<T>::max() const
 {
     return *std::max_element(this->begin(), this->end());
 }
 
-template<typename T>
+template <typename T>
 T cvector<T>::min() const
 {
     return *std::min_element(this->begin(), this->end());
 }
 
-template<typename T>
+template <typename T>
 cvector<T> cvector<T>::mag(cvector<T> x, cvector<T> y)
 {
     if (x.size() != y.size())
@@ -216,29 +215,30 @@ cvector<T> cvector<T>::mag(cvector<T> x, cvector<T> y)
         throw "Vectors must have the same size";
     }
     cvector<T> v;
-    for (int i = 0; i < x.size();i++)
+    for (int i = 0; i < x.size(); i++)
     {
         v.push_back(std::sqrt(x[i] * x[i] + y[i] * y[i]));
     }
     return v;
-int cvector<T>::mean(void) const
+}
+
+template <typename T>
+T cvector<T>::mean() const
 {
-    double mean_value = 0 ;
+    T mean_value = 0;
     for (size_t i = 0; i < this->size(); i++)
     {
-            mean_value += this->operator[](i);
+        mean_value += this->operator[](i);
     }
-    mean_value = (mean_value/this->size());
-    return (int) mean_value;
+    return (mean_value / (T)this->size());
 }
 
-template <typename T> 
-int cvector<T>::median(void)
-{   int median;
-    size_t n = this->size() / 2;
-    std::nth_element(this->begin(), this->begin()+n, this->end());
-    median = this->operator[](n);
-    return median;
+template <typename T>
+T cvector<T>::median() const
+{
+    cvector<T> v(this->size());
+    std::copy(this->begin(), this->end(), v.begin());
+    std::sort(v.begin(), v.end());
+    return v[this->size() / 2];
 }
-
 #endif

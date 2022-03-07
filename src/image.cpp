@@ -49,23 +49,23 @@ namespace img
 
     cvector<double> filter(const Image &img, cvector<cvector<double>> mask)
     {
-        size_t img_rows = img.mat.rows;
-        size_t img_cols = img.mat.cols;
-        size_t mask_rows = mask.size();
-        size_t mask_cols = mask[0].size();
+        int img_rows = img.mat.rows;
+        int img_cols = img.mat.cols;
+        int mask_rows = mask.size();
+        int mask_cols = mask[0].size();
 
         // convert uchar to int to handle -ve values
         cvector<double> fltr(img.pixels.begin(), img.pixels.end());
         cvector<cvector<double>> mtrx = fltr.to_2d(img_rows, img_cols);
         fltr.clear();
 
-        for (size_t row = 0; row < (img_rows - mask_rows + 1); row++)
+        for (int row = 0; row < (img_rows - mask_rows + 1); row++)
         {
-            for (size_t col = 0; col < (img_cols - mask_cols + 1); col++)
+            for (int col = 0; col < (img_cols - mask_cols + 1); col++)
             {
                 cvector<cvector<double>> sub = mtrx.range(row, row + mask_rows, col, col + mask_cols);
                 double px = 0;
-                for (size_t mask_row = 0; mask_row < mask_rows; mask_row++)
+                for (int mask_row = 0; mask_row < mask_rows; mask_row++)
                 {
                     px += sub[mask_row].dot(mask[mask_row]);
                 }
@@ -254,7 +254,7 @@ namespace img
         return Image(pxs, img.mat.rows, img.mat.cols, img.mat.type());
     }
 
-    bool strong_pixel(cvector<cvector<uchar>> &mtrx, size_t row, size_t col, double min, double max)
+    bool strong_pixel(cvector<cvector<uchar>> &mtrx, int row, int col, double min, double max)
     {
         if (mtrx[row][col] < min)
             return false;
@@ -392,7 +392,7 @@ namespace img
         return Image(source_mat);
     }
 
-    void histogram_equalization(Image &eq_img)
+    Image histogram_equalization(Image &eq_img)
     {
         int hist[256] = {0};
         Image equalized = eq_img.mat.clone();
@@ -417,7 +417,6 @@ namespace img
             splt[2].mat.data[i] = map[(int)(splt[2].pixels[i])];
 
         Image merged = merge(splt);
-        Image bgr = convert(merged, "hsv", "bgr");
-        bgr.display("Equalized Image");
+        return convert(merged, "hsv", "bgr");
     }
 }

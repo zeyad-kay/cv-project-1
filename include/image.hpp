@@ -28,11 +28,11 @@ namespace img
     Image roberts(const Image &img, bool dx = true, bool dy = true);
     Image canny(const Image &img, double threshold1, double threshold2);
     cvector<uchar> scale(cvector<double> pixels);
-    bool strong_pixel(cvector<cvector<uchar>> &mtrx, size_t row, size_t col, double min, double max);
+    bool strong_pixel(cvector<cvector<uchar>> &mtrx, int row, int col, double min, double max);
     Image normalize(Image &img, int min, int max);
     Image add_noise(Image &source, std::string type, uchar noise_factor);
     Image noise_filter(Image &source, int size, std::string type, double std=1);
-    void histogram_equalization(Image &eq_img);
+    Image histogram_equalization(Image &eq_img);
 };
 
 #endif
