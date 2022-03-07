@@ -255,4 +255,34 @@ namespace img
         return Image(source_mat);
     }
 
+    void histogram_equalization(Image &eq_img)
+    {
+        int hist[256] = {0};
+        Image equalized = eq_img.mat.clone();
+        Image hsv = convert(equalized, "bgr", "hsv");
+        cvector<Image> splt = split(hsv);
+        for (int i = 0; i < equalized.mat.rows * equalized.mat.cols; i++)
+            hist[(int)(splt[2].pixels[i])] = hist[(int)(splt[2].pixels[i])] + 1;
+        int sum = 0;
+        int pdf[256] = {0};
+        int map[256] = {0};
+        for (int i = 0; i < 256; i++)
+        {
+            sum = sum + hist[i];
+            pdf[i] = sum;
+        }
+        for (int i = 0; i < 256; i++)
+        {
+            map[i] = (int)((pdf[i] - pdf[0] - 0.f) * 255 / (pdf[255] - pdf[0]));
+        }
+        for (int i = 0; i < 256; i++)
+        {
+            std::cout << map[i] << std::endl;
+        }
+        for (int i = 0; i < equalized.mat.rows * equalized.mat.cols; i++)
+            splt[2].mat.data[i] = map[(int)(splt[2].pixels[i])];
+        Image merged = merge(splt);
+        Image bgr = convert(merged, "hsv", "bgr");
+        bgr.display("Equalized Image");
+    }
 }

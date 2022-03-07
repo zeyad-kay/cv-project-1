@@ -27,6 +27,7 @@ namespace img
     Image normalize(Image &img, int min, int max);
     Image add_noise(Image &source, std::string type, uchar noise_factor);
     Image noise_filter(Image &source, int size, std::string type, double std=1);
+    void histogram_equalization(Image &eq_img);
 };
 
 #endif
