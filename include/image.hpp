@@ -25,6 +25,7 @@ namespace img
     Image convert(const Image &img, std::string from, std::string to);
     cvector<Image> split(const Image &img);
     Image normalize(Image &img, int min, int max);
+    void histogram_equalization(Image eq_img);
 };
 
 #endif
