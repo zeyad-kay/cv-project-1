@@ -1,5 +1,7 @@
 # Computer Vision Project 1
-In this project we have implemented some Image Processing Techniques implemented from scratch using C++, we have implemented our Techniques in this readme in lenna image for more illustration.
+In this project we have implemented some Image Processing Techniques implemented from scratch using C++, we have implemented our Techniques in this readme in lenna image for more illustration. 
+
+[Appendix](appendix/appendix.md)
 
 ##### Lenna Image
 ![Lenna Image](examples/lennagray.png)
@@ -42,7 +44,9 @@ Three types of noise are implemented in this project: Uniform, Gaussian, and Sal
 #### Parameters 
 
 ` image ` : the image on which the should be added, it should be of class img::Image which is implemented in this project.
+
 ` type ` : the type of noise you want to add, there are three types you must write any one of them "Gaussian", "Uniform" , and "Salt".
+
 ` noise_factor ` : It's the ratio of the noise in the image.
 
 #### Examples
@@ -66,7 +70,9 @@ Three types of noise are implemented in this project: Median, Mean, and Gaussian
 #### Parameters 
 
 ` image ` : the image on which the should be added, it should be of calse img::Image
+
 ` type ` : the type of noise filter you want to apply, there are three types you must write any one of them "Gaussian", "Mean" , and "Median".
+
 ` std ` : It's the standard deviation of the gaussian kernal, it has a default value equals 1, It should be used only when using Gaussian filter unless it will be useless.
 #### Examples
 The following examples for filttering the Salt & Pepper noise implemented in this project.
@@ -80,8 +86,35 @@ The following examples for filttering the Salt & Pepper noise implemented in thi
 ##### 2.3 Gaussian Filter
 ![Gaussian Filter](examples/gaussian_filter.png)
 
-## 4- Histogram and Distribution Curve
+# 3- Edge detection 
+Three types of detection are implemented in this project: Sobel, Prewitt, and Roberts.
+sobel : 
 
+`Image sobel(const Image &img, bool dx = true, bool dy = true)`
+
+`Image prewitt(const Image &img, bool dx = true, bool dy = true)`
+
+`Image roberts(const Image &img, bool dx = true, bool dy = true)`
+
+#### Parameters 
+` Image ` : Image 
+
+` dx ` : if you want to detect the horizontal edges
+
+` dy ` : if you want to detect the vertical edges
+
+#### Examples
+
+##### 3.1 Sobel Detection
+![sobel](examples/sobel.png)
+
+##### 3.2 Prewitt Detection
+![prewitt](examples/prewitt.png)
+
+##### 3.3 Roberts Detection
+![roberts](examples/roberts.png)
+
+## 4- Histogram and Distribution Curve
 `
 void Plot_Histogram(Image img,string image_type)
 `
@@ -109,3 +142,33 @@ void plot_Distribution_curve(Image img,string image_type)
 ![Distribution Curve](examples/green_distribution_curve.png)
 
 ![Distribution Curve](examples/blue_distribution_curve.png)
+
+## 5. Equalization
+
+equalization has multiple steps of pipelining such as histogram loop, accumulation loop and mapping loop. 
+this function is returning Image type so it can be used in further steps.
+the whole function is implemented in image.cpp 
+
+### Parameters:
+img: the image which will be equalized.
+
+### Results:
+![equalized image](examples/equalized.png)
+
+
+
+## 6. Normalization
+
+Normalization is only dependent on few parameters which are min new value, max new value and the image itself.
+by the given equation -> `(newrange * (value - oldmin) / oldrange) + newmin `
+we can get the new value for a pixel
+We put the equation in utils.cpp file, while the whole normalization function were put in the mentioned image class.
+
+### Parameters:
+img: the image which will be normalized.
+min: minimum  value as this function is dynamic (not restricted to specific number).
+max: max value as this function is dynamic (not restricted to specific number).
+
+### Results:
+![normalized between 0 and 50 net](examples/norm_0_50.png)
+![normalized between 200 and 255 net](examples/norm_200_255.png)
