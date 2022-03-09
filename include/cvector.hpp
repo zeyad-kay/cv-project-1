@@ -26,9 +26,8 @@ public:
     static cvector<T> mag(cvector<T> x, cvector<T> y);
     cvector<T> range(int start_row, int end_row, int start_col, int end_col) const;
     cvector<cvector<T>> to_2d(size_t rows, size_t cols) const;
-    T mean() const;
-    T median() const;
-
+    int mean(void) const;
+    int median(void);
     friend std::ostream &operator<<(std::ostream &os, const cvector<T> &v)
     {
         os << "{ ";
@@ -169,7 +168,6 @@ cvector<T> cvector<T>::range(int start_row, int end_row, int start_col, int end_
     }
     return v;
 }
-
 template <typename T>
 cvector<cvector<T>> cvector<T>::to_2d(size_t rows, size_t cols) const
 {
@@ -223,22 +221,22 @@ cvector<T> cvector<T>::mag(cvector<T> x, cvector<T> y)
 }
 
 template <typename T>
-T cvector<T>::mean() const
+int cvector<T>::mean(void) const
 {
-    T mean_value = 0;
+    double mean_value = 0 ;
     for (size_t i = 0; i < this->size(); i++)
     {
-        mean_value += this->operator[](i);
+            mean_value += this->operator[](i);
     }
-    return (mean_value / (T)this->size());
+    mean_value = (mean_value/this->size());
+    return (int) mean_value;
 }
-
-template <typename T>
-T cvector<T>::median() const
-{
-    cvector<T> v(this->size());
-    std::copy(this->begin(), this->end(), v.begin());
-    std::sort(v.begin(), v.end());
-    return v[this->size() / 2];
+template <typename T> 
+int cvector<T>::median(void)
+{   int median;
+    size_t n = this->size() / 2;
+    std::nth_element(this->begin(), this->begin()+n, this->end());
+    median = this->operator[](n);
+    return median;
 }
 #endif

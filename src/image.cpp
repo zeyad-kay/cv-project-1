@@ -30,6 +30,7 @@ namespace img
     {
         cv::namedWindow(title, cv::WINDOW_AUTOSIZE);
         cv::imshow(title, this->mat);
+        cv::waitKey(0);
     }
 
     void Image::vectorize()
