@@ -4,6 +4,8 @@
 #include <vector>
 #include <numeric>
 #include <iostream>
+#include <algorithm>
+
 template <typename T>
 class cvector : public std::vector<T>
 {
@@ -18,9 +20,14 @@ public:
     cvector<T> operator/(const cvector<T> &v) const;
     cvector<T> operator/(const T value) const;
     T dot(const cvector<T> &v) const;
-    cvector<T> range(const size_t start_row, const size_t end_row, const size_t start_col, const size_t end_col) const;
-    int mean(void) const;
-    int median(void);
+    T max() const;
+    T min() const;
+    cvector<T> abs() const;
+    static cvector<T> mag(cvector<T> x, cvector<T> y);
+    cvector<T> range(int start_row, int end_row, int start_col, int end_col) const;
+    cvector<cvector<T>> to_2d(size_t rows, size_t cols) const;
+    T mean() const;
+    T median() const;
 
     friend std::ostream &operator<<(std::ostream &os, const cvector<T> &v)
     {
@@ -144,13 +151,17 @@ T cvector<T>::dot(const cvector<T> &v) const
 }
 
 template <typename T>
-cvector<T> cvector<T>::range(const size_t start_row, const size_t end_row, const size_t start_col, const size_t end_col) const
+cvector<T> cvector<T>::range(int start_row, int end_row, int start_col, int end_col) const
 {
+    start_row = start_row < 0 ? 0 : start_row;
+    start_col = start_col < 0 ? 0 : start_col;
+    end_row = end_row > this->size() ? this->size() : end_row;
+    end_col = end_col > this->operator[](0).size() ? this->operator[](0).size() : end_col;
     cvector<T> v;
-    for (size_t i = start_row; i < end_row; i++)
+    for (int i = start_row; i < end_row; i++)
     {
         T row;
-        for (size_t j = start_col; j < end_col; j++)
+        for (int j = start_col; j < end_col; j++)
         {
             row.push_back(this->operator[](i)[j]);
         }
@@ -160,24 +171,74 @@ cvector<T> cvector<T>::range(const size_t start_row, const size_t end_row, const
 }
 
 template <typename T>
-int cvector<T>::mean(void) const
+cvector<cvector<T>> cvector<T>::to_2d(size_t rows, size_t cols) const
 {
-    double mean_value = 0 ;
+    cvector<cvector<T>> matrix(rows, cvector<T>(cols));
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            matrix[i][j] = this->operator[](j + (cols * i));
+        }
+    }
+    return matrix;
+}
+
+template <typename T>
+cvector<T> cvector<T>::abs() const
+{
+    cvector<T> vect;
+    for (auto itr = this->begin(); itr != this->end(); itr++)
+    {
+        vect.push_back(std::abs(*itr));
+    }
+    return vect;
+}
+
+template <typename T>
+T cvector<T>::max() const
+{
+    return *std::max_element(this->begin(), this->end());
+}
+
+template <typename T>
+T cvector<T>::min() const
+{
+    return *std::min_element(this->begin(), this->end());
+}
+
+template <typename T>
+cvector<T> cvector<T>::mag(cvector<T> x, cvector<T> y)
+{
+    if (x.size() != y.size())
+    {
+        throw "Vectors must have the same size";
+    }
+    cvector<T> v;
+    for (int i = 0; i < x.size(); i++)
+    {
+        v.push_back(std::sqrt(x[i] * x[i] + y[i] * y[i]));
+    }
+    return v;
+}
+
+template <typename T>
+T cvector<T>::mean() const
+{
+    T mean_value = 0;
     for (size_t i = 0; i < this->size(); i++)
     {
-            mean_value += this->operator[](i);
+        mean_value += this->operator[](i);
     }
-    mean_value = (mean_value/this->size());
-    return (int) mean_value;
+    return (mean_value / (T)this->size());
 }
 
-template <typename T> 
-int cvector<T>::median(void)
-{   int median;
-    size_t n = this->size() / 2;
-    std::nth_element(this->begin(), this->begin()+n, this->end());
-    median = this->operator[](n);
-    return median;
+template <typename T>
+T cvector<T>::median() const
+{
+    cvector<T> v(this->size());
+    std::copy(this->begin(), this->end(), v.begin());
+    std::sort(v.begin(), v.end());
+    return v[this->size() / 2];
 }
-
 #endif
