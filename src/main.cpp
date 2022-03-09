@@ -29,7 +29,7 @@ int main(int argc, char **argv)
   filtered_Gaussian.display("filtered_Gaussian");
   filtered_Mean.display("filtered_Mean");
   
-    /*Histogram and distribution curve
+    /*//4-Histogram and distribution curve
     Image image = Image("E:\\Biomedical Drive\\cv tasks\\cv-project-1\\images\\lenna.png");
     Plot_Histogram(image, "color");
     plot_Distribution_curve(image,"color");

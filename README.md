@@ -79,3 +79,33 @@ The following examples for filttering the Salt & Pepper noise implemented in thi
 
 ##### 2.3 Gaussian Filter
 ![Gaussian Filter](examples/gaussian_filter.png)
+
+## 4- Histogram and Distribution Curve
+
+`
+void Plot_Histogram(Image img,string image_type)
+`
+
+`
+void plot_Distribution_curve(Image img,string image_type)
+`
+### Parameters 
+
+` image ` : the image you want to plot its histogram and distribution curve, it should be of class img::Image which is implemented in this project.
+
+` image_type ` : the type of image you entered "grayscale" or "color"
+
+### Examples
+#### 4.1.1 Red Histogram
+![Red Histogram](examples/Red_Histogram.png)
+#### 4.1.2 Green Histogram
+![Green Histogram](examples/Green_Histogram.png)
+#### 4.1.3 Blue Histogram
+![Blue Histogram](examples/Blue_Histogram.png)
+
+#### 4.2 Distribution Curve
+![Distribution Curve](examples/red_Distribution_curve.png)
+
+![Distribution Curve](examples/green_distribution_curve.png)
+
+![Distribution Curve](examples/blue_distribution_curve.png)
