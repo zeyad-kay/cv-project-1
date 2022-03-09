@@ -1,13 +1,15 @@
 #include "histogram.hpp"
+#include "Image.hpp"
 using namespace cv;
 using namespace std;
+using namespace img;
 
 int grayscale_Histogram[256]={0} , Red_Histogram[256]={0},Green_Histogram[256]={0},Blue_Histogram[256]={0};
 int gray_Cumulative[256]={0} , Red_Cumulative[256]={0},Green_Cumulative[256]={0},Blue_Cumulative[256]={0};
 
-void calculate_Histogram(Mat Image, string image_type) 
+void calculate_Histogram(Image img, string image_type) 
 {
-    Mat image = Image;
+    Mat image = img.mat,clone;
     vector<int> Red_Values , Green_Values , Blue_Values , Grayscale_Values ;
 if (image_type == "grayscale")
 {
@@ -39,9 +41,9 @@ else if (image_type == "color")
 }
 }
 
-void Plot_Histogram(Mat Image,string image_type)
+void Plot_Histogram(Image img,string image_type)
 {
-calculate_Histogram ( Image , image_type );
+calculate_Histogram ( img , image_type );
 if (image_type == "grayscale")
 {
     plot(grayscale_Histogram,"grayscale_Histogram",Scalar(0, 0, 0)); 
@@ -54,9 +56,9 @@ else if (image_type == "color")
 }
 }
 
-void plot_Distribution_curve(Mat Image,string image_type)
+void plot_Distribution_curve(Image img,string image_type)
 {
-calculate_Histogram ( Image , image_type );
+calculate_Histogram ( img , image_type );
 if (image_type == "grayscale")
 {
     plot(grayscale_Histogram,"Distribution_Curve",Scalar(0, 0, 0)); 
@@ -70,9 +72,9 @@ else if (image_type == "color")
 }
 
 
-void calculate_Cumulative(Mat Image,string image_type)
+void calculate_Cumulative(Image img,string image_type)
 {
-    calculate_Histogram(Image , image_type );
+    calculate_Histogram(img , image_type );
     if (image_type == "grayscale")
     {
         gray_Cumulative[0]=grayscale_Histogram[0];
@@ -95,9 +97,9 @@ void calculate_Cumulative(Mat Image,string image_type)
     }
 }
 
-void Plot_Cumulative(Mat Image,string image_type)
+void Plot_Cumulative(Image img,string image_type)
 {
-calculate_Cumulative ( Image , image_type );
+calculate_Cumulative ( img , image_type );
 if (image_type == "grayscale")
 {
     plot(gray_Cumulative,"Gray_Cumulative",Scalar(0, 0, 0)); 

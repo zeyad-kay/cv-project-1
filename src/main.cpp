@@ -12,7 +12,7 @@ int main(int argc, char **argv)
 {
     
     /*Histogram and distribution curve
-    Mat image = imread("image path");
+    Image image = Image("E:\\Biomedical Drive\\cv tasks\\cv-project-1\\images\\lenna.png");
     Plot_Histogram(image, "color");
     plot_Distribution_curve(image,"color");
     */
