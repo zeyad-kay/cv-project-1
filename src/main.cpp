@@ -4,14 +4,21 @@
 #include "Image.hpp"
 #include "cvector.hpp"
 #include "histogram.hpp"
-
+#include "utils.hpp"
+#include <math.h>
+#include <cstdlib>
+#include <cmath>
 using namespace cv;
 using namespace img;
 
 int main(int argc, char **argv)
 {    
   Image image = Image("C:\\Users\\abdoz\\Documents\\CV\\test\\lenna.png");
-image.display("original");
+  image.display("original");
+  Image gray = convert(image, "bgr", "gray");
+  gray.display("gray scaled");
+  Image hsv = convert(image, "bgr", "hsv");
+  cvector<Image> splt = split(hsv);
 // part 1 & 2
   Image noisy_Salt = add_noise(image,"Salt",5);
   Image noisy_Gaussian = add_noise(image,"Gaussian",20);
@@ -26,9 +33,7 @@ image.display("original");
   filtered_Gaussian.display("filtered_Gaussian");
   filtered_Mean.display("filtered_Mean");
 
-
  // part 3 edges
-  Image gray = convert(image, "bgr", "gray");
   // sobel
   Image sbl = sobel(gray,1,1);
   sbl.display("sobel");
@@ -50,13 +55,14 @@ image.display("original");
   Image eq_img = histogram_equalization(image);
   eq_img.display("equalized image");
 
-  // part 6) normalize image:
-    Image hsv = convert(image, "bgr", "hsv");
-    cvector<Image> splt = split(hsv);
-    
-    splt[2] = normalize(splt[2],0,50);
+
+  // part 6) normalize image:    
+
+    splt[2] = normalize(splt[2],0,20);
     Image merged  = merge(splt);
     Image bgr = convert(merged, "hsv", "bgr");
     bgr.display("normalized image");
+ 
+
   return 0;
 }
