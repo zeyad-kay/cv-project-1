@@ -150,7 +150,7 @@ this function is returning Image type so it can be used in further steps.
 the whole function is implemented in image.cpp 
 
 ### Parameters:
-img: the image which will be equalized.
+img: the image which will be equalized. (image type)
 
 ### Results:
 ![equalized image](examples/equalized.png)
@@ -165,10 +165,10 @@ we can get the new value for a pixel
 We put the equation in utils.cpp file, while the whole normalization function were put in the mentioned image class.
 
 ### Parameters:
-img: the image which will be normalized.
-min: minimum  value as this function is dynamic (not restricted to specific number).
-max: max value as this function is dynamic (not restricted to specific number).
+img: the image which will be normalized. (image type)
+min: minimum  percentage as this function is dynamic (not restricted to specific number). (0 - 100)
+max: max percentage as this function is dynamic (not restricted to specific number).  (0 - 100)
 
 ### Results:
-![normalized between 0 and 50 net](examples/norm_0_50.png)
-![normalized between 200 and 255 net](examples/norm_200_255.png)
+![normalized between 0 and 20 percentage](examples/norm_0_50.png)
+![normalized between 80 and 100 percentage](examples/norm_200_255.png)

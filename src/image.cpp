@@ -92,33 +92,86 @@ namespace img
 
     Image convert(const Image &img, std::string from, std::string to)
     {
-        cv::Mat dest;
+        Image dest;
+
         if (from == "bgr" && to == "gray")
-        {
-            cv::cvtColor(img.mat, dest, cv::COLOR_BGR2GRAY);
-        }
-        else if (from == "gray" && to == "hsv")
-        {
-            cv::cvtColor(img.mat, dest, cv::COLOR_GRAY2BGR);
-            convert(Image(dest), "bgr", "hsv");
+        {/*
+        cvector<Image> splt = split(img);
+        Image cp = img.mat.clone();
+        float gray=0;
+            for (int i = 0; i < splt[0].mat.rows; i++)
+            {
+            for (int j = 0; j < splt[0].mat.cols; j++)
+
+            {
+                gray= (0.299*cp.mat.at<cv::Vec3b>(i,j)[2] + 0.587*cp.mat.at<cv::Vec3b>(i,j)[1] + 0.114 *cp.mat.at<cv::Vec3b>(i,j)[0] );
+                cp.mat.at<cv::Vec3b>(i,j) = round(gray);
+                cp.mat.at<cv::Vec3b>(i,j)[1] = round(gray);
+                cp.mat.at<cv::Vec3b>(i,j)[2] = round(gray);  
+            }
+            }
+            std::cout<<cp.mat.type()<<std::endl;
+            */
+           cv::Mat cpy = img.mat.clone();
+            cvtColor(img.mat,cpy,cv::COLOR_BGR2GRAY);
+                dest  = Image(cpy);
         }
         else if (from == "bgr" && to == "hsv")
         {
-            cv::cvtColor(img.mat, dest, cv::COLOR_BGR2HSV);
+            float fH,fS,fV;
+            cvector<Image> splt = split(img);
+            Image cp = img.mat.clone();
+            for (int i = 0; i < splt[0].mat.rows; i++)
+            {
+            for (int j = 0; j < splt[0].mat.cols; j++)
+
+            {
+                fH=0;
+                fS=0;
+                fV=0;
+                RGBtoHSV((float)(img.mat.at<cv::Vec3b>(i,j)[2]),(float)(img.mat.at<cv::Vec3b>(i,j)[1]),(float)(img.mat.at<cv::Vec3b>(i,j)[0]),&fH,&fS,&fV);
+
+                cp.mat.at<cv::Vec3b>(i,j)[0] = round(fH/10);
+                cp.mat.at<cv::Vec3b>(i,j)[1] = fS;
+                cp.mat.at<cv::Vec3b>(i,j)[2] = fV;  
+            }
+            }
+            //std::cout<<"img  "<<(int)img.mat.at<cv::Vec3b>(10,10)[2]<<" "<<(int)img.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)img.mat.at<cv::Vec3b>(10,10)[0]<<std::endl;
+            //std::cout<<"cp  "<<(int)cp.mat.at<cv::Vec3b>(10,10)[0]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[2]<<std::endl;
+            dest  = cp;
+            //std::cout<<"dest  "<<(int)dest.mat.at<cv::Vec3b>(10,10)[0]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[2]<<std::endl;
+
         }
+        
         else if (from == "hsv" && to == "bgr")
         {
-            cv::cvtColor(img.mat, dest, cv::COLOR_HSV2BGR);
-        }
-        else if (from == "gray" && to == "bgr")
-        {
-            cv::cvtColor(img.mat, dest, cv::COLOR_GRAY2BGR);
+            float fR,fG,fB;
+            cvector<Image> splt = split(img);
+            Image cp = img.mat.clone();
+            for (int i = 0; i < splt[0].mat.rows; i++)
+            {
+            for (int j = 0; j < splt[0].mat.cols; j++)
+            {
+                fR=0;
+                fG=0;
+                fB=0;
+                HSVtoRGB(&fR,&fG,&fB,(float)(img.mat.at<cv::Vec3b>(i,j)[0])*10,(float)((img.mat.at<cv::Vec3b>(i,j)[1])/100.0),(float)((img.mat.at<cv::Vec3b>(i,j)[2])/100.0));
+                cp.mat.at<cv::Vec3b>(i,j)[0] = fB*255;
+                cp.mat.at<cv::Vec3b>(i,j)[1] = fG*255;
+                cp.mat.at<cv::Vec3b>(i,j)[2] = fR*255; 
+            }
+            }
+            dest  = cp;
+           //         std::cout<<"img  "<<(int)img.mat.at<cv::Vec3b>(10,10)[0]<<" "<<(float)((img.mat.at<cv::Vec3b>(10,10)[1])/100.0)<<" "<<(float)((img.mat.at<cv::Vec3b>(10,10)[2])/100.0)<<std::endl;
+            //std::cout<<"cp  "<<(int)cp.mat.at<cv::Vec3b>(10,10)[2]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[0]<<std::endl;
+            //std::cout<<"dest  "<<(int)dest.mat.at<cv::Vec3b>(10,10)[2]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[0]<<std::endl;
+
         }
         else
         {
             throw "Invalid conversion";
         }
-        return Image(dest);
+        return dest;
     }
 
     cvector<Image> split(const Image &img)
@@ -400,7 +453,7 @@ namespace img
         Image hsv = convert(equalized, "bgr", "hsv");
         cvector<Image> splt = split(hsv);
         for (int i = 0; i < equalized.mat.rows * equalized.mat.cols; i++)
-            hist[(int)(splt[2].pixels[i])] = hist[(int)(splt[2].pixels[i])] + 1;
+            hist[(int)(splt[2].pixels[i])] = hist[(int)((splt[2].pixels[i])*2.55)] + 1;
         int sum = 0;
         int pdf[256] = {0};
         int map[256] = {0};
@@ -415,7 +468,7 @@ namespace img
         }
 
         for (int i = 0; i < equalized.mat.rows * equalized.mat.cols; i++)
-            splt[2].mat.data[i] = map[(int)(splt[2].pixels[i])];
+            splt[2].mat.data[i] = map[(int)((splt[2].pixels[i])/255.0*100)];
 
         Image merged = merge(splt);
         return convert(merged, "hsv", "bgr");
