@@ -13,12 +13,13 @@ using namespace img;
 
 int main(int argc, char **argv)
 {    
-  Image image = Image("C:\\Users\\abdoz\\Documents\\CV\\test\\lenna.png");
+  Image image = Image("E:\\Biomedical Drive\\cv tasks\\cv-project-1\\images\\lenna.png");
+  
   image.display("original");
   Image gray = convert(image, "bgr", "gray");
-  gray.display("gray scaled");
   Image hsv = convert(image, "bgr", "hsv");
   cvector<Image> splt = split(hsv);
+
 // part 1 & 2
   Image noisy_Salt = add_noise(image,"Salt",5);
   Image noisy_Gaussian = add_noise(image,"Gaussian",20);
@@ -47,8 +48,9 @@ int main(int argc, char **argv)
   rob.display("roberts");
 
   //4-Histogram and distribution curve
-    Plot_Histogram(image, "color");
-    plot_Distribution_curve(image,"color");
+    Image gray_image = Image("E:\\Biomedical Drive\\cv tasks\\cv-project-1\\images\\mashromgray.png");
+    Plot_Histogram(gray_image, "grayscale");
+    plot_Distribution_curve(gray_image,"grayscale");
 
   // part 5) equalization
 
@@ -63,6 +65,13 @@ int main(int argc, char **argv)
     Image bgr = convert(merged, "hsv", "bgr");
     bgr.display("normalized image");
  
+//part 8
+  //8.1 (convert color image to gray)
+    Image grayscaled_image = convert(image, "bgr", "gray");
+    grayscaled_image.display("gray_scaled image");
+  //8.2 (plot R,G,B Histograms with its cumulative curve)
+    Plot_Histogram(image, "color");
+    Plot_Cumulative(image,"color");
 
   return 0;
 }

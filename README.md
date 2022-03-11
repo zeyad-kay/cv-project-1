@@ -128,20 +128,11 @@ void plot_Distribution_curve(Image img,string image_type)
 
 ` image_type ` : the type of image you entered "grayscale" or "color"
 
-### Examples
-#### 4.1.1 Red Histogram
-![Red Histogram](examples/Red_Histogram.png)
-#### 4.1.2 Green Histogram
-![Green Histogram](examples/Green_Histogram.png)
-#### 4.1.3 Blue Histogram
-![Blue Histogram](examples/Blue_Histogram.png)
-
+### Results
+#### 4.1 Histogram
+![grayscaled_Histogram](examples/grayscaled_Histogram.png)
 #### 4.2 Distribution Curve
-![Distribution Curve](examples/red_Distribution_curve.png)
-
-![Distribution Curve](examples/green_distribution_curve.png)
-
-![Distribution Curve](examples/blue_distribution_curve.png)
+![Distribution Curve](examples/distribution_curve.png)
 
 ## 5. Equalization
 
@@ -172,3 +163,33 @@ max: max percentage as this function is dynamic (not restricted to specific numb
 ### Results:
 ![normalized between 0 and 20 percentage](examples/norm_0_50.png)
 ![normalized between 80 and 100 percentage](examples/norm_200_255.png)
+
+## 8.1- Transformation from color image to gray scale image
+`
+img::convert(img::Image source, "bgr", "gray");
+`
+### Result
+![Grayscaled_image](examples/lennagray.png)
+
+## 8.2-Plot R,G,B Histograms with its Cumulative Curves
+`
+void Plot_Histogram(Image img,string image_type)
+`
+
+`
+void Plot_Cumulative(Image img,string image_type)
+`
+### Results
+#### Red Histogram
+![Red Histogram](examples/Red_Histogram.png)
+#### Green Histogram
+![Green Histogram](examples/Green_Histogram.png)
+#### Blue Histogram
+![Blue Histogram](examples/Blue_Histogram.png)
+
+#### Red Cumulative Curve
+![Cumulative Curve](examples/Red_cumulative.png)
+#### Green Cumulative Curve
+![Cumulative Curve](examples/Green_cumulative.png)
+#### Blue Cumulative Curve
+![Cumulative Curve](examples/Blue_cumulative.png)

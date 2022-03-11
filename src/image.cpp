@@ -95,26 +95,28 @@ namespace img
         Image dest;
 
         if (from == "bgr" && to == "gray")
-        {/*
+        {
         cvector<Image> splt = split(img);
-        Image cp = img.mat.clone();
-        float gray=0;
+        cv::Mat cp = img.mat.clone();
+        cv::Mat grayscaled_image=cv::Mat(cp.rows, cp.cols, CV_8UC1);
+        double gray=0;
             for (int i = 0; i < splt[0].mat.rows; i++)
             {
             for (int j = 0; j < splt[0].mat.cols; j++)
 
             {
-                gray= (0.299*cp.mat.at<cv::Vec3b>(i,j)[2] + 0.587*cp.mat.at<cv::Vec3b>(i,j)[1] + 0.114 *cp.mat.at<cv::Vec3b>(i,j)[0] );
-                cp.mat.at<cv::Vec3b>(i,j) = round(gray);
-                cp.mat.at<cv::Vec3b>(i,j)[1] = round(gray);
-                cp.mat.at<cv::Vec3b>(i,j)[2] = round(gray);  
+                gray= (0.299*cp.at<cv::Vec3b>(i,j)[2]) + (0.587*cp.at<cv::Vec3b>(i,j)[1]) + (0.114 *cp.at<cv::Vec3b>(i,j)[0]);
+                grayscaled_image.at<uchar>(i, j) = gray;
             }
             }
+            dest  = Image(grayscaled_image);
+            /*
             std::cout<<cp.mat.type()<<std::endl;
-            */
+        
            cv::Mat cpy = img.mat.clone();
             cvtColor(img.mat,cpy,cv::COLOR_BGR2GRAY);
                 dest  = Image(cpy);
+                */
         }
         else if (from == "bgr" && to == "hsv")
         {
