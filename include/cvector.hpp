@@ -5,6 +5,7 @@
 #include <numeric>
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 
 template <typename T>
 class cvector : public std::vector<T>
@@ -24,6 +25,7 @@ public:
     T min() const;
     cvector<T> abs() const;
     static cvector<T> mag(cvector<T> x, cvector<T> y);
+    static cvector<T> phase(cvector<T> x, cvector<T> y);
     cvector<T> range(int start_row, int end_row, int start_col, int end_col) const;
     cvector<cvector<T>> to_2d(size_t rows, size_t cols) const;
     int mean(void) const;
@@ -220,6 +222,22 @@ cvector<T> cvector<T>::mag(cvector<T> x, cvector<T> y)
     return v;
 }
 
+template <typename T>
+cvector<T> cvector<T>::phase(cvector<T> x, cvector<T> y)
+{
+    if (x.size() != y.size())
+    {
+        throw "Vectors must have the same size";
+    }
+    cvector<T> v;
+    for (int i = 0; i < x.size(); i++)
+    {
+        v.push_back(std::atan2(y[i], x[i]) * 180 / 3.14159265);
+    }
+    return v;
+}
+
+// T cvector<T>::mean() const
 template <typename T>
 int cvector<T>::mean(void) const
 {
