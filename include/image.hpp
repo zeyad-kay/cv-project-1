@@ -5,19 +5,24 @@
 #include "cvector.hpp"
 #include <string.h>
 
+
 namespace img
-{
+{   
+    typedef enum {
+        THRESH_BIN,
+        THRESH_BIN_INV
+    }t_type;
     class Image
     {
-        public:
-            cv::Mat mat;
-            cvector<uchar> pixels;
-            Image(){};
-            Image(std::string path);
-            Image(cv::Mat mat);
-            Image(cvector<uchar> pixels, size_t rows, size_t cols, int type);
-            void display(std::string title) const;
-            void vectorize();
+    public:
+        cv::Mat mat;
+        cvector<uchar> pixels;
+        Image(){};
+        Image(std::string path);
+        Image(cv::Mat mat);
+        Image(cvector<uchar> pixels, size_t rows, size_t cols, int type);
+        void display(std::string title) const;
+        void vectorize();
     };
     cvector<double> filter(const Image &img, cvector<cvector<double>> mask);
     Image merge(const cvector<Image> &imgs);
@@ -31,8 +36,9 @@ namespace img
     bool strong_pixel(cvector<cvector<uchar>> &mtrx, int row, int col, double min, double max);
     Image normalize(Image &img, int min, int max);
     Image add_noise(Image &source, std::string type, uchar noise_factor);
-    Image noise_filter(Image &source, int size, std::string type, double std=1);
+    Image noise_filter(Image &source, int size, std::string type, double std = 1);
     Image histogram_equalization(Image &eq_img);
+    Image globalThreshold(Image &img, float threshold, float mx_value, t_type thresholdType);
 };
 
 #endif
