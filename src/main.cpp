@@ -71,7 +71,9 @@ int main(int argc, char **argv)
     Image grayscaled_image = convert(image, "bgr", "gray");
     grayscaled_image.display("gray scale");
     Image t = globalThreshold(grayscaled_image,127,255,THRESH_BIN);
-    t.display("test");
+    t.display("global");
+    t = localThreshold(grayscaled_image,255,THRESH_BIN);
+    t.display("local");
   //   grayscaled_image.display("gray_scaled image");
   // //8.2 (plot R,G,B Histograms with its cumulative curve)
   //   Plot_Histogram(image, "color");

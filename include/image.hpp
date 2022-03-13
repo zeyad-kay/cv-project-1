@@ -11,7 +11,11 @@ namespace img
     typedef enum {
         THRESH_BIN,
         THRESH_BIN_INV
-    }t_type;
+    }t_types;
+    typedef enum {
+        ADAPTIVE_THRESH_MEAN,
+        ADAPTIVE_THRESH_GAUSSIAN
+    }a_types;
     class Image
     {
     public:
@@ -38,7 +42,8 @@ namespace img
     Image add_noise(Image &source, std::string type, uchar noise_factor);
     Image noise_filter(Image &source, int size, std::string type, double std = 1);
     Image histogram_equalization(Image &eq_img);
-    Image globalThreshold(Image &img, float threshold, float mx_value, t_type thresholdType);
+    Image globalThreshold(Image &img, float threshold, float mx_value, t_types thresholdType);
+    Image localThreshold(Image &img, float mx_value, t_types thresholdType);
 };
 
 #endif
