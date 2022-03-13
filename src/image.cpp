@@ -4,7 +4,6 @@
 #include <opencv2/opencv.hpp>
 #include <random>
 
-
 namespace img
 {
     Image::Image(std::string path)
@@ -96,23 +95,23 @@ namespace img
 
         if (from == "bgr" && to == "gray")
         {
-        cvector<Image> splt = split(img);
-        cv::Mat cp = img.mat.clone();
-        cv::Mat grayscaled_image=cv::Mat(cp.rows, cp.cols, CV_8UC1);
-        double gray=0;
+            cvector<Image> splt = split(img);
+            cv::Mat cp = img.mat.clone();
+            cv::Mat grayscaled_image = cv::Mat(cp.rows, cp.cols, CV_8UC1);
+            double gray = 0;
             for (int i = 0; i < splt[0].mat.rows; i++)
             {
-            for (int j = 0; j < splt[0].mat.cols; j++)
+                for (int j = 0; j < splt[0].mat.cols; j++)
 
-            {
-                gray= (0.299*cp.at<cv::Vec3b>(i,j)[2]) + (0.587*cp.at<cv::Vec3b>(i,j)[1]) + (0.114 *cp.at<cv::Vec3b>(i,j)[0]);
-                grayscaled_image.at<uchar>(i, j) = gray;
+                {
+                    gray = (0.299 * cp.at<cv::Vec3b>(i, j)[2]) + (0.587 * cp.at<cv::Vec3b>(i, j)[1]) + (0.114 * cp.at<cv::Vec3b>(i, j)[0]);
+                    grayscaled_image.at<uchar>(i, j) = gray;
+                }
             }
-            }
-            dest  = Image(grayscaled_image);
+            dest = Image(grayscaled_image);
             /*
             std::cout<<cp.mat.type()<<std::endl;
-        
+
            cv::Mat cpy = img.mat.clone();
             cvtColor(img.mat,cpy,cv::COLOR_BGR2GRAY);
                 dest  = Image(cpy);
@@ -120,54 +119,52 @@ namespace img
         }
         else if (from == "bgr" && to == "hsv")
         {
-            float fH,fS,fV;
+            float fH, fS, fV;
             cvector<Image> splt = split(img);
             Image cp = img.mat.clone();
             for (int i = 0; i < splt[0].mat.rows; i++)
             {
-            for (int j = 0; j < splt[0].mat.cols; j++)
+                for (int j = 0; j < splt[0].mat.cols; j++)
 
-            {
-                fH=0;
-                fS=0;
-                fV=0;
-                RGBtoHSV((float)(img.mat.at<cv::Vec3b>(i,j)[2]),(float)(img.mat.at<cv::Vec3b>(i,j)[1]),(float)(img.mat.at<cv::Vec3b>(i,j)[0]),&fH,&fS,&fV);
+                {
+                    fH = 0;
+                    fS = 0;
+                    fV = 0;
+                    RGBtoHSV((float)(img.mat.at<cv::Vec3b>(i, j)[2]), (float)(img.mat.at<cv::Vec3b>(i, j)[1]), (float)(img.mat.at<cv::Vec3b>(i, j)[0]), &fH, &fS, &fV);
 
-                cp.mat.at<cv::Vec3b>(i,j)[0] = round(fH/10);
-                cp.mat.at<cv::Vec3b>(i,j)[1] = fS;
-                cp.mat.at<cv::Vec3b>(i,j)[2] = fV;  
+                    cp.mat.at<cv::Vec3b>(i, j)[0] = round(fH / 10);
+                    cp.mat.at<cv::Vec3b>(i, j)[1] = fS;
+                    cp.mat.at<cv::Vec3b>(i, j)[2] = fV;
+                }
             }
-            }
-            //std::cout<<"img  "<<(int)img.mat.at<cv::Vec3b>(10,10)[2]<<" "<<(int)img.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)img.mat.at<cv::Vec3b>(10,10)[0]<<std::endl;
-            //std::cout<<"cp  "<<(int)cp.mat.at<cv::Vec3b>(10,10)[0]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[2]<<std::endl;
-            dest  = cp;
-            //std::cout<<"dest  "<<(int)dest.mat.at<cv::Vec3b>(10,10)[0]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[2]<<std::endl;
-
+            // std::cout<<"img  "<<(int)img.mat.at<cv::Vec3b>(10,10)[2]<<" "<<(int)img.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)img.mat.at<cv::Vec3b>(10,10)[0]<<std::endl;
+            // std::cout<<"cp  "<<(int)cp.mat.at<cv::Vec3b>(10,10)[0]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[2]<<std::endl;
+            dest = cp;
+            // std::cout<<"dest  "<<(int)dest.mat.at<cv::Vec3b>(10,10)[0]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[2]<<std::endl;
         }
-        
+
         else if (from == "hsv" && to == "bgr")
         {
-            float fR,fG,fB;
+            float fR, fG, fB;
             cvector<Image> splt = split(img);
             Image cp = img.mat.clone();
             for (int i = 0; i < splt[0].mat.rows; i++)
             {
-            for (int j = 0; j < splt[0].mat.cols; j++)
-            {
-                fR=0;
-                fG=0;
-                fB=0;
-                HSVtoRGB(&fR,&fG,&fB,(float)(img.mat.at<cv::Vec3b>(i,j)[0])*10,(float)((img.mat.at<cv::Vec3b>(i,j)[1])/100.0),(float)((img.mat.at<cv::Vec3b>(i,j)[2])/100.0));
-                cp.mat.at<cv::Vec3b>(i,j)[0] = fB*255;
-                cp.mat.at<cv::Vec3b>(i,j)[1] = fG*255;
-                cp.mat.at<cv::Vec3b>(i,j)[2] = fR*255; 
+                for (int j = 0; j < splt[0].mat.cols; j++)
+                {
+                    fR = 0;
+                    fG = 0;
+                    fB = 0;
+                    HSVtoRGB(&fR, &fG, &fB, (float)(img.mat.at<cv::Vec3b>(i, j)[0]) * 10, (float)((img.mat.at<cv::Vec3b>(i, j)[1]) / 100.0), (float)((img.mat.at<cv::Vec3b>(i, j)[2]) / 100.0));
+                    cp.mat.at<cv::Vec3b>(i, j)[0] = fB * 255;
+                    cp.mat.at<cv::Vec3b>(i, j)[1] = fG * 255;
+                    cp.mat.at<cv::Vec3b>(i, j)[2] = fR * 255;
+                }
             }
-            }
-            dest  = cp;
-           //         std::cout<<"img  "<<(int)img.mat.at<cv::Vec3b>(10,10)[0]<<" "<<(float)((img.mat.at<cv::Vec3b>(10,10)[1])/100.0)<<" "<<(float)((img.mat.at<cv::Vec3b>(10,10)[2])/100.0)<<std::endl;
-            //std::cout<<"cp  "<<(int)cp.mat.at<cv::Vec3b>(10,10)[2]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[0]<<std::endl;
-            //std::cout<<"dest  "<<(int)dest.mat.at<cv::Vec3b>(10,10)[2]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[0]<<std::endl;
-
+            dest = cp;
+            //         std::cout<<"img  "<<(int)img.mat.at<cv::Vec3b>(10,10)[0]<<" "<<(float)((img.mat.at<cv::Vec3b>(10,10)[1])/100.0)<<" "<<(float)((img.mat.at<cv::Vec3b>(10,10)[2])/100.0)<<std::endl;
+            // std::cout<<"cp  "<<(int)cp.mat.at<cv::Vec3b>(10,10)[2]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[0]<<std::endl;
+            // std::cout<<"dest  "<<(int)dest.mat.at<cv::Vec3b>(10,10)[2]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[0]<<std::endl;
         }
         else
         {
@@ -455,7 +452,7 @@ namespace img
         Image hsv = convert(equalized, "bgr", "hsv");
         cvector<Image> splt = split(hsv);
         for (int i = 0; i < equalized.mat.rows * equalized.mat.cols; i++)
-            hist[(int)(splt[2].pixels[i])] = hist[(int)((splt[2].pixels[i])*2.55)] + 1;
+            hist[(int)(splt[2].pixels[i])] = hist[(int)((splt[2].pixels[i]) * 2.55)] + 1;
         int sum = 0;
         int pdf[256] = {0};
         int map[256] = {0};
@@ -470,9 +467,170 @@ namespace img
         }
 
         for (int i = 0; i < equalized.mat.rows * equalized.mat.cols; i++)
-            splt[2].mat.data[i] = map[(int)((splt[2].pixels[i])/255.0*100)];
+            splt[2].mat.data[i] = map[(int)((splt[2].pixels[i]) / 255.0 * 100)];
 
         Image merged = merge(splt);
         return convert(merged, "hsv", "bgr");
+    }
+
+    // Image globalThreshold(Image &img)
+    Image globalThreshold(Image &img, float threshold, float mx_value, t_types thresholdType)
+    {
+        cv::Mat cp = img.mat.clone();
+        cv::Mat thresholded_image = cv::Mat(cp.rows, cp.cols, CV_8UC1);
+        for (int i = 0; i < img.mat.rows; i++)
+        {
+            for (int j = 0; j < img.mat.cols; j++)
+            {
+                float pixelValue = cp.at<uchar>(i, j);
+                if (thresholdType == THRESH_BIN)
+                {
+                    if (pixelValue > threshold)
+                    {
+                        thresholded_image.at<uchar>(i, j) = mx_value;
+                    }
+                    else
+                    {
+                        thresholded_image.at<uchar>(i, j) = 0;
+                    }
+                }
+                else
+                {
+                    if (pixelValue > threshold)
+                    {
+                        thresholded_image.at<uchar>(i, j) = 0;
+                    }
+                    else
+                    {
+                        thresholded_image.at<uchar>(i, j) = mx_value;
+                    }
+                }
+            }
+        }
+        return Image(thresholded_image);
+    }
+
+    Image localThreshold(Image &img, float mx_value, t_types thresholdType)
+    {
+        cv::Mat cp = img.mat.clone();
+        cv::Mat thresholded_image = cv::Mat(cp.rows, cp.cols, CV_8UC1);
+        float gcurr = 0.25;
+        float gup = 0.125;
+        float gleft = 0.125;
+        float gright = 0.125;
+        float gdown = 0.125;
+        float gur = 0.0625;
+        float gul = 0.0625;
+        float gdr = 0.0625;
+        float gdl = 0.0625;
+        unsigned char curr = 0;
+        unsigned char up = 0;
+        unsigned char left = 0;
+        unsigned char right = 0;
+        unsigned char down = 0;
+        unsigned char ur = 0;
+        unsigned char ul = 0;
+        unsigned char dr = 0;
+        unsigned char dl = 0;
+        int rows = img.mat.rows;
+        int cols = img.mat.cols;
+        int count = 0;
+        for (int r = 0; r < rows - 1; r++)
+        {
+            for (int c = 0; c < cols - 1; c++)
+            {
+                // std::cout << count << std::endl;
+                // std::cout << r << " : " <<  c << std::endl;
+                count++;
+                if (c - 1 >= 0)
+                {
+                    // std::cout << "left" << std::endl;
+                    // left = gleft * im->data[(r * cols) + (c - 1)].i;
+                    left = gleft * cp.at<uchar>(r, (c - 1));
+                    // std::cout << "end left" << std::endl;
+                    if (r - 1 >= 0)
+                    {
+                        // std::cout << "ul" << std::endl;
+                        // ul = gul * im->data[((r - 1) * cols) + (c - 1)].i;
+                        ul = gul * cp.at<uchar>((r - 1), (c - 1));
+                        // std::cout << "end ul" << std::endl;
+                    }
+                    if (r + 1 <= rows)
+                    {
+                        // dl = gdl * im->data[((r + 1) * cols) + (c - 1)].i;
+                    // std::cout << "dl" << std::endl;
+                        dl = gdl * cp.at<uchar>((r + 1), (c - 1));
+                    // std::cout << "end dl" << std::endl;
+                    }
+                }
+                if (c + 1 <= cols)
+                {
+                    // right = gright * im->data[(r * cols) + (c + 1)].i;
+                    // std::cout << "right" << std::endl;
+                    right = gright * cp.at<uchar>(r, (c + 1));
+                    // std::cout << "end right" << std::endl;
+                    if (r - 1 >= 0)
+                    {
+                        // ur = gur * im->data[((r - 1) * cols) + (c + 1)].i;
+                    // std::cout << "ul" << std::endl;
+                        ur = gur * cp.at<uchar>((r - 1), (c + 1));
+                    // std::cout << "end ul" << std::endl;
+                    }
+                    if (r + 1 <= rows)
+                    {
+                        // dr = gdr * im->data[((r + 1) * cols) + (c + 1)].i;
+                        // std::cout << "dr" << std::endl;
+                        dr = gdr * cp.at<uchar>((r + 1), (c + 1));
+                        // std::cout << "end dr" << std::endl;
+
+                    }
+                }
+                if (r - 1 >= 0)
+                {
+                    // up = gup * im->data[((r - 1) * cols) + c].i;
+                    up = gup * cp.at<uchar>((r - 1), c);
+                }
+                if (r + 1 <= rows)
+                {
+                    // down = gdown * im->data[((r + 1) * cols) + c].i;
+                    down = gdown * cp.at<uchar>((r + 1), c);
+                }
+                // curr = gcurr * im->data[(r * cols) + c].i;
+                curr = gcurr * cp.at<uchar>(r, c);
+                unsigned char weightedAvg = down + up + left + right + curr + ul + ur + dl + dr;
+                if (thresholdType == THRESH_BIN)
+                {
+                    if (cp.at<uchar>(r, c) > weightedAvg)
+                    {
+                        thresholded_image.at<uchar>(r, c) = mx_value;
+                    }
+                    else
+                    {
+                        thresholded_image.at<uchar>(r, c) = 0;
+                    }
+                }
+                else
+                {
+                    if (cp.at<uchar>(r, c) > weightedAvg)
+                    {
+                        thresholded_image.at<uchar>(r, c) = 0;
+                    }
+                    else
+                    {
+                        thresholded_image.at<uchar>(r, c) = mx_value;
+                    }
+                }
+                curr = 0;
+                up = 0;
+                left = 0;
+                right = 0;
+                down = 0;
+                ur = 0;
+                ul = 0;
+                dr = 0;
+                dl = 0;
+            }
+        }
+        return Image(thresholded_image);
     }
 }
