@@ -11,6 +11,7 @@
 using namespace cv;
 using namespace img;
 
+// cv.
 int main(int argc, char **argv)
 {
   Image image = Image("C:\\Users\\zeyad\\Desktop\\cv-project-1\\images\\lenna.png");
@@ -20,7 +21,7 @@ int main(int argc, char **argv)
   Image hsv = convert(image, "bgr", "hsv");
   cvector<Image> splt = split(hsv);
 
-  // part 1 & 2
+  // // part 1 & 2
   Image noisy_Salt = add_noise(image, "Salt", 5);
   Image noisy_Gaussian = add_noise(image, "Gaussian", 20);
   Image noisy_Uniform = add_noise(image, "Uniform", 20);
@@ -35,7 +36,6 @@ int main(int argc, char **argv)
   filtered_Mean.display("filtered_Mean");
 
   // part 3 edges
-
   // sobel
   Image(scale(sobel(gray, 1, 1)), gray.mat.rows - 2, gray.mat.rows - 2, CV_8UC1).display("sobel");
   // roberts
@@ -45,30 +45,41 @@ int main(int argc, char **argv)
   // canny
   Image(scale(canny(gray, 20, 55)), gray.mat.rows - 2, gray.mat.rows - 2, CV_8UC1).display("canny");
 
-  // 4-Histogram and distribution curve
-  Image gray_image = Image("E:\\Biomedical Drive\\cv tasks\\cv-project-1\\images\\mashromgray.png");
+  //   //4-Histogram and distribution curve
+  Image gray_image = Image("C:\\Users\\zeyad\\Desktop\\cv-project-1\\images\\mashromgray.png");
   Plot_Histogram(gray_image, "grayscale");
   plot_Distribution_curve(gray_image, "grayscale");
 
   // part 5) equalization
-
   Image eq_img = histogram_equalization(image);
   eq_img.display("equalized image");
 
   // part 6) normalize image:
-
   splt[2] = normalize(splt[2], 0, 20);
   Image merged = merge(splt);
   Image bgr = convert(merged, "hsv", "bgr");
   bgr.display("normalized image");
 
+  Image grayscaled_image = convert(image, "bgr", "gray");
+  // part 7) local and global thresholding
+  grayscaled_image.display("gray scale");
+  Image t = globalThreshold(grayscaled_image, 127, 255, THRESH_BIN);
+  t.display("global thresholding");
+  t = localThreshold(grayscaled_image, 255, THRESH_BIN);
+  t.display("local thresholding");
+
   // part 8
   // 8.1 (convert color image to gray)
-  Image grayscaled_image = convert(image, "bgr", "gray");
-  grayscaled_image.display("gray_scaled image");
   // 8.2 (plot R,G,B Histograms with its cumulative curve)
   Plot_Histogram(image, "color");
   Plot_Cumulative(image, "color");
+
+  // part 9) low pass and high pass filter
+  grayscaled_image.display("gray_scaled image");
+  Image low_pass = PassFilter(grayscaled_image, 80, LOW_PASS_FILTER);
+  low_pass.display("low pass");
+  Image high_pass = PassFilter(grayscaled_image, 50, HIGH_PASS_FILTER);
+  high_pass.display("high pass");
 
   return 0;
 }

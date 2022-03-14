@@ -386,7 +386,7 @@ namespace img
             {
                 if (strong_edge(cpy, row, col, min, max))
                 {
-                    pxs.push_back(cpy[row][col]);
+                    pxs.push_back(255);
                 }
                 else
                 {
@@ -561,5 +561,189 @@ namespace img
 
         Image merged = merge(splt);
         return convert(merged, "hsv", "bgr");
+    }
+
+    // Image globalThreshold(Image &img)
+    Image globalThreshold(Image &img, float threshold, float mx_value, t_types thresholdType)
+    {
+        cv::Mat cp = img.mat.clone();
+        cv::Mat thresholded_image = cv::Mat(cp.rows, cp.cols, CV_8UC1);
+        for (int i = 0; i < img.mat.rows; i++)
+        {
+            for (int j = 0; j < img.mat.cols; j++)
+            {
+                float pixelValue = cp.at<uchar>(i, j);
+                if (thresholdType == THRESH_BIN)
+                {
+                    if (pixelValue > threshold)
+                    {
+                        thresholded_image.at<uchar>(i, j) = mx_value;
+                    }
+                    else
+                    {
+                        thresholded_image.at<uchar>(i, j) = 0;
+                    }
+                }
+                else
+                {
+                    if (pixelValue > threshold)
+                    {
+                        thresholded_image.at<uchar>(i, j) = 0;
+                    }
+                    else
+                    {
+                        thresholded_image.at<uchar>(i, j) = mx_value;
+                    }
+                }
+            }
+        }
+        return Image(thresholded_image);
+    }
+
+    Image localThreshold(Image &img, float mx_value, t_types thresholdType)
+    {
+        cv::Mat cp = img.mat.clone();
+        cv::Mat thresholded_image = cv::Mat(cp.rows, cp.cols, CV_8UC1);
+        float gcurr = 0.25;
+        float gup = 0.125;
+        float gleft = 0.125;
+        float gright = 0.125;
+        float gdown = 0.125;
+        float gur = 0.0625;
+        float gul = 0.0625;
+        float gdr = 0.0625;
+        float gdl = 0.0625;
+        unsigned char curr = 0;
+        unsigned char up = 0;
+        unsigned char left = 0;
+        unsigned char right = 0;
+        unsigned char down = 0;
+        unsigned char ur = 0;
+        unsigned char ul = 0;
+        unsigned char dr = 0;
+        unsigned char dl = 0;
+        int rows = img.mat.rows;
+        int cols = img.mat.cols;
+        int count = 0;
+        for (int r = 0; r < rows - 1; r++)
+        {
+            for (int c = 0; c < cols - 1; c++)
+            {
+                // std::cout << count << std::endl;
+                // std::cout << r << " : " <<  c << std::endl;
+                count++;
+                if (c - 1 >= 0)
+                {
+                    // std::cout << "left" << std::endl;
+                    // left = gleft * im->data[(r * cols) + (c - 1)].i;
+                    left = gleft * cp.at<uchar>(r, (c - 1));
+                    // std::cout << "end left" << std::endl;
+                    if (r - 1 >= 0)
+                    {
+                        // std::cout << "ul" << std::endl;
+                        // ul = gul * im->data[((r - 1) * cols) + (c - 1)].i;
+                        ul = gul * cp.at<uchar>((r - 1), (c - 1));
+                        // std::cout << "end ul" << std::endl;
+                    }
+                    if (r + 1 <= rows)
+                    {
+                        // dl = gdl * im->data[((r + 1) * cols) + (c - 1)].i;
+                        // std::cout << "dl" << std::endl;
+                        dl = gdl * cp.at<uchar>((r + 1), (c - 1));
+                        // std::cout << "end dl" << std::endl;
+                    }
+                }
+                if (c + 1 <= cols)
+                {
+                    // right = gright * im->data[(r * cols) + (c + 1)].i;
+                    // std::cout << "right" << std::endl;
+                    right = gright * cp.at<uchar>(r, (c + 1));
+                    // std::cout << "end right" << std::endl;
+                    if (r - 1 >= 0)
+                    {
+                        // ur = gur * im->data[((r - 1) * cols) + (c + 1)].i;
+                        // std::cout << "ul" << std::endl;
+                        ur = gur * cp.at<uchar>((r - 1), (c + 1));
+                        // std::cout << "end ul" << std::endl;
+                    }
+                    if (r + 1 <= rows)
+                    {
+                        // dr = gdr * im->data[((r + 1) * cols) + (c + 1)].i;
+                        // std::cout << "dr" << std::endl;
+                        dr = gdr * cp.at<uchar>((r + 1), (c + 1));
+                        // std::cout << "end dr" << std::endl;
+                    }
+                }
+                if (r - 1 >= 0)
+                {
+                    // up = gup * im->data[((r - 1) * cols) + c].i;
+                    up = gup * cp.at<uchar>((r - 1), c);
+                }
+                if (r + 1 <= rows)
+                {
+                    // down = gdown * im->data[((r + 1) * cols) + c].i;
+                    down = gdown * cp.at<uchar>((r + 1), c);
+                }
+                // curr = gcurr * im->data[(r * cols) + c].i;
+                curr = gcurr * cp.at<uchar>(r, c);
+                unsigned char weightedAvg = down + up + left + right + curr + ul + ur + dl + dr;
+                if (thresholdType == THRESH_BIN)
+                {
+                    if (cp.at<uchar>(r, c) > weightedAvg)
+                    {
+                        thresholded_image.at<uchar>(r, c) = mx_value;
+                    }
+                    else
+                    {
+                        thresholded_image.at<uchar>(r, c) = 0;
+                    }
+                }
+                else
+                {
+                    if (cp.at<uchar>(r, c) > weightedAvg)
+                    {
+                        thresholded_image.at<uchar>(r, c) = 0;
+                    }
+                    else
+                    {
+                        thresholded_image.at<uchar>(r, c) = mx_value;
+                    }
+                }
+                curr = 0;
+                up = 0;
+                left = 0;
+                right = 0;
+                down = 0;
+                ur = 0;
+                ul = 0;
+                dr = 0;
+                dl = 0;
+            }
+        }
+        return Image(thresholded_image);
+    }
+
+    Image PassFilter(Image &img, float freq_threshold,p_types pass_type)
+    {
+        cv::Mat imgIn = img.mat;
+        imgIn.convertTo(imgIn, CV_32F);
+        // DFT
+        cv::Mat DFT_image;
+        DFT(imgIn, DFT_image);
+
+        // construct H
+        cv::Mat H;
+        H = construct_H(imgIn, freq_threshold,pass_type);
+
+        // filtering
+        cv::Mat complexIH;
+        filtering(DFT_image, complexIH, H);
+
+        // IDFT
+        cv::Mat imgOut;
+        cv::dft(complexIH, imgOut, cv::DFT_INVERSE | cv::DFT_REAL_OUTPUT);
+
+        cv::normalize(imgOut, imgOut, 0, 1, cv::NORM_MINMAX);
+        return Image(imgOut);
     }
 }
