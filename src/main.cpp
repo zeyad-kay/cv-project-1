@@ -14,7 +14,7 @@ using namespace img;
 // cv.
 int main(int argc, char **argv)
 {
-  Image image = Image("C:\\Users\\zeyad\\Desktop\\cv-project-1\\images\\lenna.png");
+  Image image = Image("D:\\sbme\\fourth year\\second term\\CV\\projects\\cv-project-1\\images\\lenna.png");
 
   image.display("original");
   Image gray = convert(image, "bgr", "gray");
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
   Image(scale(canny(gray, 20, 55)), gray.mat.rows - 2, gray.mat.rows - 2, CV_8UC1).display("canny");
 
   //   //4-Histogram and distribution curve
-  Image gray_image = Image("C:\\Users\\zeyad\\Desktop\\cv-project-1\\images\\mashromgray.png");
+  Image gray_image = Image("D:\\sbme\\fourth year\\second term\\CV\\projects\\cv-project-1\\images\\lenna.png");
   Plot_Histogram(gray_image, "grayscale");
   plot_Distribution_curve(gray_image, "grayscale");
 
@@ -81,5 +81,15 @@ int main(int argc, char **argv)
   Image high_pass = PassFilter(grayscaled_image, 50, HIGH_PASS_FILTER);
   high_pass.display("high pass");
 
+  // part 10) hyprid images
+  // images should be the same size and on channel
+  Image image1 = Image("D:\\sbme\\fourth year\\second term\\CV\\projects\\cv-project-1\\images\\snake1.jpeg");
+  Image grayscaled_image1 = convert(image1, "bgr", "gray");
+  grayscaled_image1.display("image 1");
+  Image image2 = Image("D:\\sbme\\fourth year\\second term\\CV\\projects\\cv-project-1\\images\\snake2.jpeg");
+  Image grayscaled_image2 = convert(image2, "bgr", "gray");
+  grayscaled_image2.display("image 2");
+  Image hyprid = hybridImages(grayscaled_image1, grayscaled_image2);
+  hyprid.display("hyprid");
   return 0;
 }
