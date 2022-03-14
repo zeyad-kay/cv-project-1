@@ -4,6 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <random>
 
+#define PI 3.14159265
 
 namespace img
 {
@@ -96,23 +97,23 @@ namespace img
 
         if (from == "bgr" && to == "gray")
         {
-        cvector<Image> splt = split(img);
-        cv::Mat cp = img.mat.clone();
-        cv::Mat grayscaled_image=cv::Mat(cp.rows, cp.cols, CV_8UC1);
-        double gray=0;
+            cvector<Image> splt = split(img);
+            cv::Mat cp = img.mat.clone();
+            cv::Mat grayscaled_image = cv::Mat(cp.rows, cp.cols, CV_8UC1);
+            double gray = 0;
             for (int i = 0; i < splt[0].mat.rows; i++)
             {
-            for (int j = 0; j < splt[0].mat.cols; j++)
+                for (int j = 0; j < splt[0].mat.cols; j++)
 
-            {
-                gray= (0.299*cp.at<cv::Vec3b>(i,j)[2]) + (0.587*cp.at<cv::Vec3b>(i,j)[1]) + (0.114 *cp.at<cv::Vec3b>(i,j)[0]);
-                grayscaled_image.at<uchar>(i, j) = gray;
+                {
+                    gray = (0.299 * cp.at<cv::Vec3b>(i, j)[2]) + (0.587 * cp.at<cv::Vec3b>(i, j)[1]) + (0.114 * cp.at<cv::Vec3b>(i, j)[0]);
+                    grayscaled_image.at<uchar>(i, j) = gray;
+                }
             }
-            }
-            dest  = Image(grayscaled_image);
+            dest = Image(grayscaled_image);
             /*
             std::cout<<cp.mat.type()<<std::endl;
-        
+
            cv::Mat cpy = img.mat.clone();
             cvtColor(img.mat,cpy,cv::COLOR_BGR2GRAY);
                 dest  = Image(cpy);
@@ -120,54 +121,52 @@ namespace img
         }
         else if (from == "bgr" && to == "hsv")
         {
-            float fH,fS,fV;
+            float fH, fS, fV;
             cvector<Image> splt = split(img);
             Image cp = img.mat.clone();
             for (int i = 0; i < splt[0].mat.rows; i++)
             {
-            for (int j = 0; j < splt[0].mat.cols; j++)
+                for (int j = 0; j < splt[0].mat.cols; j++)
 
-            {
-                fH=0;
-                fS=0;
-                fV=0;
-                RGBtoHSV((float)(img.mat.at<cv::Vec3b>(i,j)[2]),(float)(img.mat.at<cv::Vec3b>(i,j)[1]),(float)(img.mat.at<cv::Vec3b>(i,j)[0]),&fH,&fS,&fV);
+                {
+                    fH = 0;
+                    fS = 0;
+                    fV = 0;
+                    RGBtoHSV((float)(img.mat.at<cv::Vec3b>(i, j)[2]), (float)(img.mat.at<cv::Vec3b>(i, j)[1]), (float)(img.mat.at<cv::Vec3b>(i, j)[0]), &fH, &fS, &fV);
 
-                cp.mat.at<cv::Vec3b>(i,j)[0] = round(fH/10);
-                cp.mat.at<cv::Vec3b>(i,j)[1] = fS;
-                cp.mat.at<cv::Vec3b>(i,j)[2] = fV;  
+                    cp.mat.at<cv::Vec3b>(i, j)[0] = round(fH / 10);
+                    cp.mat.at<cv::Vec3b>(i, j)[1] = fS;
+                    cp.mat.at<cv::Vec3b>(i, j)[2] = fV;
+                }
             }
-            }
-            //std::cout<<"img  "<<(int)img.mat.at<cv::Vec3b>(10,10)[2]<<" "<<(int)img.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)img.mat.at<cv::Vec3b>(10,10)[0]<<std::endl;
-            //std::cout<<"cp  "<<(int)cp.mat.at<cv::Vec3b>(10,10)[0]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[2]<<std::endl;
-            dest  = cp;
-            //std::cout<<"dest  "<<(int)dest.mat.at<cv::Vec3b>(10,10)[0]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[2]<<std::endl;
-
+            // std::cout<<"img  "<<(int)img.mat.at<cv::Vec3b>(10,10)[2]<<" "<<(int)img.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)img.mat.at<cv::Vec3b>(10,10)[0]<<std::endl;
+            // std::cout<<"cp  "<<(int)cp.mat.at<cv::Vec3b>(10,10)[0]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[2]<<std::endl;
+            dest = cp;
+            // std::cout<<"dest  "<<(int)dest.mat.at<cv::Vec3b>(10,10)[0]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[2]<<std::endl;
         }
-        
+
         else if (from == "hsv" && to == "bgr")
         {
-            float fR,fG,fB;
+            float fR, fG, fB;
             cvector<Image> splt = split(img);
             Image cp = img.mat.clone();
             for (int i = 0; i < splt[0].mat.rows; i++)
             {
-            for (int j = 0; j < splt[0].mat.cols; j++)
-            {
-                fR=0;
-                fG=0;
-                fB=0;
-                HSVtoRGB(&fR,&fG,&fB,(float)(img.mat.at<cv::Vec3b>(i,j)[0])*10,(float)((img.mat.at<cv::Vec3b>(i,j)[1])/100.0),(float)((img.mat.at<cv::Vec3b>(i,j)[2])/100.0));
-                cp.mat.at<cv::Vec3b>(i,j)[0] = fB*255;
-                cp.mat.at<cv::Vec3b>(i,j)[1] = fG*255;
-                cp.mat.at<cv::Vec3b>(i,j)[2] = fR*255; 
+                for (int j = 0; j < splt[0].mat.cols; j++)
+                {
+                    fR = 0;
+                    fG = 0;
+                    fB = 0;
+                    HSVtoRGB(&fR, &fG, &fB, (float)(img.mat.at<cv::Vec3b>(i, j)[0]) * 10, (float)((img.mat.at<cv::Vec3b>(i, j)[1]) / 100.0), (float)((img.mat.at<cv::Vec3b>(i, j)[2]) / 100.0));
+                    cp.mat.at<cv::Vec3b>(i, j)[0] = fB * 255;
+                    cp.mat.at<cv::Vec3b>(i, j)[1] = fG * 255;
+                    cp.mat.at<cv::Vec3b>(i, j)[2] = fR * 255;
+                }
             }
-            }
-            dest  = cp;
-           //         std::cout<<"img  "<<(int)img.mat.at<cv::Vec3b>(10,10)[0]<<" "<<(float)((img.mat.at<cv::Vec3b>(10,10)[1])/100.0)<<" "<<(float)((img.mat.at<cv::Vec3b>(10,10)[2])/100.0)<<std::endl;
-            //std::cout<<"cp  "<<(int)cp.mat.at<cv::Vec3b>(10,10)[2]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[0]<<std::endl;
-            //std::cout<<"dest  "<<(int)dest.mat.at<cv::Vec3b>(10,10)[2]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[0]<<std::endl;
-
+            dest = cp;
+            //         std::cout<<"img  "<<(int)img.mat.at<cv::Vec3b>(10,10)[0]<<" "<<(float)((img.mat.at<cv::Vec3b>(10,10)[1])/100.0)<<" "<<(float)((img.mat.at<cv::Vec3b>(10,10)[2])/100.0)<<std::endl;
+            // std::cout<<"cp  "<<(int)cp.mat.at<cv::Vec3b>(10,10)[2]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)cp.mat.at<cv::Vec3b>(10,10)[0]<<std::endl;
+            // std::cout<<"dest  "<<(int)dest.mat.at<cv::Vec3b>(10,10)[2]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[1]<<" "<<(int)dest.mat.at<cv::Vec3b>(10,10)[0]<<std::endl;
         }
         else
         {
@@ -192,7 +191,7 @@ namespace img
         return Image(merged);
     }
 
-    Image sobel(const Image &img, bool dx, bool dy)
+    cvector<double> sobel(const Image &img, bool dx, bool dy)
     {
         if (!dx && !dy)
         {
@@ -220,11 +219,10 @@ namespace img
         {
             gy = filter(img, y);
         }
-        cvector<uchar> res = scale(cvector<double>::mag(gx, gy));
-        return Image(res, img.mat.rows - 3 + 1, img.mat.cols - 3 + 1, img.mat.type());
+        return cvector<double>::mag(gx, gy);
     }
 
-    Image prewitt(const Image &img, bool dx, bool dy)
+    cvector<double> prewitt(const Image &img, bool dx, bool dy)
     {
         cvector<cvector<double>> x = {
             {1, 0, -1},
@@ -248,11 +246,10 @@ namespace img
         {
             gy = filter(img, y);
         }
-        cvector<uchar> res = scale(cvector<double>::mag(gx, gy));
-        return Image(res, img.mat.rows - 3 + 1, img.mat.cols - 3 + 1, img.mat.type());
+        return cvector<double>::mag(gx, gy);
     }
 
-    Image roberts(const Image &img, bool dx, bool dy)
+    cvector<double> roberts(const Image &img, bool dx, bool dy)
     {
         if (!dx && !dy)
         {
@@ -277,11 +274,10 @@ namespace img
         {
             gy = filter(img, y);
         }
-        cvector<uchar> res = scale(cvector<double>::mag(gx, gy));
-        return Image(res, img.mat.rows - 2 + 1, img.mat.cols - 2 + 1, img.mat.type());
+        return cvector<double>::mag(gx, gy);
     }
 
-    Image canny(const Image &img, double threshold1, double threshold2)
+    cvector<double> canny(const Image &img, double threshold1, double threshold2)
     {
         if (!threshold1 || !threshold2)
         {
@@ -289,17 +285,108 @@ namespace img
         }
         double max = std::max(threshold1, threshold2);
         double min = std::min(threshold1, threshold2);
-        Image s = sobel(img, 1, 1);
 
-        cvector<cvector<uchar>> mtrx = img.pixels.to_2d(img.mat.rows, img.mat.cols);
-        cvector<uchar> pxs;
+        cvector<double> gx = sobel(img, 1, 0);
+        cvector<double> gy = sobel(img, 0, 1);
+        cvector<double> mag = cvector<double>::mag(gx, gy);
+        cvector<double> phase = cvector<double>::phase(gx, gy);
+        cvector<cvector<double>> mtrx = mag.to_2d(img.mat.rows - 3 + 1, img.mat.cols - 3 + 1);
+        cvector<cvector<double>> cpy = mtrx;
+
+        // Lower bound cut-off suppression
         for (int row = 0; row < mtrx.size(); row++)
         {
             for (int col = 0; col < mtrx[0].size(); col++)
             {
-                if (strong_pixel(mtrx, row, col, min, max))
+                double p = abs(phase[(row * mtrx.size()) + col]);
+                // 45
+                if (p >= PI / 8 && p < 3 * PI / 8)
                 {
-                    pxs.push_back(mtrx[row][col]);
+                    // Top left or bottom right pixels
+                    if ((row - 1 < 0 && col - 1 < 0) || (row + 1 == mtrx.size() && col + 1 == mtrx[0].size()))
+                        continue;
+
+                    else if (col + 1 == mtrx[0].size() || row - 1 < 0)
+                    {
+                        if (mtrx[row][col] < mtrx[row + 1][col - 1])
+                            cpy[row][col] = 0;
+                    }
+
+                    else if (col - 1 < 0 || row + 1 == mtrx.size())
+                    {
+                        if (mtrx[row][col] < mtrx[row - 1][col + 1])
+                            cpy[row][col] = 0;
+                    }
+
+                    else if (mtrx[row][col] < mtrx[row - 1][col + 1] || mtrx[row][col] < mtrx[row + 1][col - 1])
+                        cpy[row][col] = 0;
+                }
+                // 90
+                else if (p >= 3 * PI / 8 && p < 5 * PI / 8)
+                {
+                    if (row + 1 == mtrx.size())
+                    {
+                        if (mtrx[row][col] < mtrx[row - 1][col])
+                            cpy[row][col] = 0;
+                    }
+                    else if (row - 1 < 0)
+                    {
+                        if (mtrx[row][col] < mtrx[row + 1][col])
+                            cpy[row][col] = 0;
+                    }
+                    else if (mtrx[row][col] < mtrx[row + 1][col] || mtrx[row][col] < mtrx[row - 1][col])
+                        cpy[row][col] = 0;
+                }
+                // 135
+                else if (p >= 5 * PI / 8 && p < 7 * PI / 2)
+                {
+                    // Top right or bottom left pixels
+                    if ((row - 1 < 0 && col + 1 == mtrx[0].size()) || (row + 1 == mtrx.size() && col - 1 < 0))
+                        continue;
+
+                    else if (col + 1 == mtrx[0].size() || row + 1 == mtrx.size())
+                    {
+                        if (mtrx[row][col] < mtrx[row - 1][col - 1])
+                            cpy[row][col] = 0;
+                    }
+
+                    else if (col - 1 < 0 || row - 1 < 0)
+                    {
+                        if (mtrx[row][col] < mtrx[row + 1][col + 1])
+                            cpy[row][col] = 0;
+                    }
+                    else if (mtrx[row][col] < mtrx[row - 1][col - 1] || mtrx[row][col] < mtrx[row + 1][col + 1])
+                        cpy[row][col] = 0;
+                }
+                // 0
+                else
+                {
+                    if (col + 1 == mtrx[0].size())
+                    {
+                        if (mtrx[row][col] < mtrx[row][col - 1])
+                            cpy[row][col] = 0;
+                    }
+
+                    else if (col - 1 < 0)
+                    {
+                        if (mtrx[row][col] < mtrx[row][col + 1])
+                            cpy[row][col] = 0;
+                    }
+                    else if (mtrx[row][col] < mtrx[row][col + 1] || mtrx[row][col] < mtrx[row][col - 1])
+                        cpy[row][col] = 0;
+                }
+            }
+        }
+
+        // Double thresholding and hysteresis
+        cvector<double> pxs;
+        for (int row = 0; row < cpy.size(); row++)
+        {
+            for (int col = 0; col < cpy[0].size(); col++)
+            {
+                if (strong_edge(cpy, row, col, min, max))
+                {
+                    pxs.push_back(cpy[row][col]);
                 }
                 else
                 {
@@ -307,16 +394,16 @@ namespace img
                 }
             }
         }
-        return Image(pxs, img.mat.rows, img.mat.cols, img.mat.type());
+        return pxs;
     }
 
-    bool strong_pixel(cvector<cvector<uchar>> &mtrx, int row, int col, double min, double max)
+    bool strong_edge(cvector<cvector<double>> &mtrx, int row, int col, double min, double max)
     {
         if (mtrx[row][col] < min)
             return false;
         if (mtrx[row][col] >= max)
             return true;
-        cvector<cvector<uchar>> sub = mtrx.range(row - 1, row + 2, col - 1, col + 2);
+        cvector<cvector<double>> sub = mtrx.range(row - 1, row + 2, col - 1, col + 2);
         for (int i = 0; i < sub.size(); i++)
         {
             for (int j = 0; j < sub[0].size(); j++)
@@ -455,7 +542,7 @@ namespace img
         Image hsv = convert(equalized, "bgr", "hsv");
         cvector<Image> splt = split(hsv);
         for (int i = 0; i < equalized.mat.rows * equalized.mat.cols; i++)
-            hist[(int)(splt[2].pixels[i])] = hist[(int)((splt[2].pixels[i])*2.55)] + 1;
+            hist[(int)(splt[2].pixels[i])] = hist[(int)((splt[2].pixels[i]) * 2.55)] + 1;
         int sum = 0;
         int pdf[256] = {0};
         int map[256] = {0};
@@ -470,7 +557,7 @@ namespace img
         }
 
         for (int i = 0; i < equalized.mat.rows * equalized.mat.cols; i++)
-            splt[2].mat.data[i] = map[(int)((splt[2].pixels[i])/255.0*100)];
+            splt[2].mat.data[i] = map[(int)((splt[2].pixels[i]) / 255.0 * 100)];
 
         Image merged = merge(splt);
         return convert(merged, "hsv", "bgr");

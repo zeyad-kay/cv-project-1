@@ -24,8 +24,8 @@ public:
     T max() const;
     T min() const;
     cvector<T> abs() const;
-    static cvector<T> mag(cvector<T> x, cvector<T> y);
-    static cvector<T> phase(cvector<T> x, cvector<T> y);
+    static cvector<double> mag(cvector<T> x, cvector<T> y);
+    static cvector<double> phase(cvector<T> x, cvector<T> y);
     cvector<T> range(int start_row, int end_row, int start_col, int end_col) const;
     cvector<cvector<T>> to_2d(size_t rows, size_t cols) const;
     int mean(void) const;
@@ -208,13 +208,13 @@ T cvector<T>::min() const
 }
 
 template <typename T>
-cvector<T> cvector<T>::mag(cvector<T> x, cvector<T> y)
+cvector<double> cvector<T>::mag(cvector<T> x, cvector<T> y)
 {
     if (x.size() != y.size())
     {
         throw "Vectors must have the same size";
     }
-    cvector<T> v;
+    cvector<double> v;
     for (int i = 0; i < x.size(); i++)
     {
         v.push_back(std::sqrt(x[i] * x[i] + y[i] * y[i]));
@@ -223,16 +223,16 @@ cvector<T> cvector<T>::mag(cvector<T> x, cvector<T> y)
 }
 
 template <typename T>
-cvector<T> cvector<T>::phase(cvector<T> x, cvector<T> y)
+cvector<double> cvector<T>::phase(cvector<T> x, cvector<T> y)
 {
     if (x.size() != y.size())
     {
         throw "Vectors must have the same size";
     }
-    cvector<T> v;
+    cvector<double> v;
     for (int i = 0; i < x.size(); i++)
     {
-        v.push_back(std::atan2(y[i], x[i]) * 180 / 3.14159265);
+        v.push_back(std::atan2(y[i], x[i]));
     }
     return v;
 }
