@@ -14,7 +14,7 @@ using namespace img;
 // cv.
 int main(int argc, char **argv)
 {
-  Image image = Image("C:\\Users\\zeyad\\Desktop\\cv-project-1\\images\\lenna.png");
+  Image image = Image("D:\\sbme\\fourth year\\second term\\CV\\projects\\cv-project-1\\images\\lenna.png");
 
   image.display("original");
   Image gray = convert(image, "bgr", "gray");
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
   Image(scale(canny(gray, 20, 55)), gray.mat.rows - 2, gray.mat.rows - 2, CV_8UC1).display("canny");
 
   //   //4-Histogram and distribution curve
-  Image gray_image = Image("C:\\Users\\zeyad\\Desktop\\cv-project-1\\images\\mashromgray.png");
+  Image gray_image = Image("D:\\sbme\\fourth year\\second term\\CV\\projects\\cv-project-1\\images\\lenna.png");
   Plot_Histogram(gray_image, "grayscale");
   plot_Distribution_curve(gray_image, "grayscale");
 
@@ -60,6 +60,7 @@ int main(int argc, char **argv)
   Image bgr = convert(merged, "hsv", "bgr");
   bgr.display("normalized image");
 
+  Image grayscaled_image = convert(image, "bgr", "gray");
   // part 7) local and global thresholding
   grayscaled_image.display("gray scale");
   Image t = globalThreshold(grayscaled_image, 127, 255, THRESH_BIN);
@@ -73,12 +74,10 @@ int main(int argc, char **argv)
   Plot_Histogram(image, "color");
   Plot_Cumulative(image, "color");
 
-  part 9) low pass and high pass filter
+  // part 9) low pass and high pass filter
   grayscaled_image.display("gray_scaled image");
-  Image grayscaled_image = convert(image1, "bgr", "gray");
   Image low_pass = PassFilter(grayscaled_image, 80, LOW_PASS_FILTER);
   low_pass.display("low pass");
-  grayscaled_image = convert(image2, "bgr", "gray");
   Image high_pass = PassFilter(grayscaled_image, 50, HIGH_PASS_FILTER);
   high_pass.display("high pass");
 
@@ -90,7 +89,7 @@ int main(int argc, char **argv)
   Image image2 = Image("D:\\sbme\\fourth year\\second term\\CV\\projects\\cv-project-1\\images\\snake2.jpeg");
   Image grayscaled_image2 = convert(image2, "bgr", "gray");
   grayscaled_image2.display("image 2");
-  Image hyprid = hypridImages(grayscaled_image1, grayscaled_image2);
+  Image hyprid = hybridImages(grayscaled_image1, grayscaled_image2);
   hyprid.display("hyprid");
   return 0;
 }

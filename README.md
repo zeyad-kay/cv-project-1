@@ -96,6 +96,8 @@ sobel :
 
 `Image roberts(const Image &img, bool dx = true, bool dy = true)`
 
+`cvector<double> canny(const Image &img, double threshold1, double threshold2)`
+
 #### Parameters 
 ` Image ` : Image 
 
@@ -113,6 +115,9 @@ sobel :
 
 ##### 3.3 Roberts Detection
 ![roberts](examples/roberts.png)
+
+##### 3.4 canny Detection
+![roberts](examples/canny.png)
 
 ## 4- Histogram and Distribution Curve
 `
@@ -161,8 +166,47 @@ min: minimum  percentage as this function is dynamic (not restricted to specific
 max: max percentage as this function is dynamic (not restricted to specific number).  (0 - 100)
 
 ### Results:
+normalized between 0 and 20 percentage
+
 ![normalized between 0 and 20 percentage](examples/norm_0_50.png)
+
+normalized between 80 and 100 percentage
+
 ![normalized between 80 and 100 percentage](examples/norm_200_255.png)
+
+
+## 7. local and global thresholding
+
+### 7.1 global thresholding
+`Image globalThreshold(Image &img, float threshold, float mx_value, t_types thresholdType) ` for global Thresholding
+
+`img` : the image that you want to threshold
+
+`threshold` : threshold value 
+
+`mx_value` : the value is set in place of pixel
+
+`thresholdType` : threshold type can be 
+`THRESH_BIN` if the value is greater than threshold so the maximum is set to the pixel or `THRESH_BIN_INV` if the value is greater than threshold so 0 is set to the pixel
+
+### 7.2 local thresholding
+`Image localThreshold(Image &img, float mx_value, t_types thresholdType) ` for local Thresholding it uses an adaptive gaussian thresholding algorithm
+
+`img` : the image that you want to threshold
+
+`threshold` : threshold value 
+
+`mx_value` : the value is set in place of pixel
+
+`thresholdType` : threshold type can be
+
+`THRESH_BIN` if the value is greater than 
+threshold so the maximum is set to the pixel or `THRESH_BIN_INV` if the value is greater than threshold so 0 is set to the pixel
+
+### Results:
+![global thresholding](examples/globalThresholding.png)
+![Local thresholding](examples/localThresholding.png)
+
 
 ## 8.1- Transformation from color image to gray scale image
 `
@@ -193,3 +237,25 @@ void Plot_Cumulative(Image img,string image_type)
 ![Cumulative Curve](examples/Green_cumulative.png)
 #### Blue Cumulative Curve
 ![Cumulative Curve](examples/Blue_cumulative.png)
+
+## 9. low pass and high pass filter 
+`Image PassFilter(Image &img, float freq_threshold,p_types pass_type)` to filter the frequency domain
+
+`img` : the image that you want to filter
+
+`freq_threshold` : frequency threshold value
+
+`pass_type` : pass type can be 
+
+`LOW_PASS_FILTER` it removes all the values that is above the frequency threshold , `HIGH_PASS_FILTER` it removes all the values that is below the frequency threshold
+
+### Results
+![low pass filter](examples/low_pass.png)
+![high pass filter](examples/high_pass.png)
+
+## 10. hybrid images 
+`Image hybridImages(Image &img1, Image &img2)` it takes two images and merge them in one image using the low frequency of one image and the high frequency of the other image
+
+### Results
+![hybrid image](examples/hyprid.png)
+

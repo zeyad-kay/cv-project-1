@@ -49,7 +49,7 @@ namespace img
     Image globalThreshold(Image &img, float threshold, float mx_value, t_types thresholdType);
     Image localThreshold(Image &img, float mx_value, t_types thresholdType);
     Image PassFilter(Image &img, float freq_threshold,p_types pass_type);
-    Image hypridImages(Image &img1, Image &img2);
+    Image hybridImages(Image &img1, Image &img2);
 };
 
 #endif

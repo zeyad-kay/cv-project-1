@@ -747,7 +747,7 @@ namespace img
         return Image(imgOut);
     }
 
-    Image hypridImages(Image &img1, Image &img2)
+    Image hybridImages(Image &img1, Image &img2)
     {
         cv::Mat imgIn1 = img1.mat;
         imgIn1.convertTo(imgIn1, CV_32F);
