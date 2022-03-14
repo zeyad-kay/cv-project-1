@@ -65,7 +65,6 @@ int main(int argc, char **argv)
       Image bgr = convert(merged, "hsv", "bgr");
       bgr.display("normalized image");
 
-  Image grayscaled_image = convert(image, "bgr", "gray");
   // part 7) local and global thresholding
   grayscaled_image.display("gray scale");
   Image t = globalThreshold(grayscaled_image, 127, 255, THRESH_BIN);
@@ -79,12 +78,24 @@ int main(int argc, char **argv)
   Plot_Histogram(image, "color");
   Plot_Cumulative(image, "color");
 
-  // part 9) low pass and high pass filter
+  part 9) low pass and high pass filter
   grayscaled_image.display("gray_scaled image");
+  Image grayscaled_image = convert(image1, "bgr", "gray");
   Image low_pass = PassFilter(grayscaled_image, 80, LOW_PASS_FILTER);
   low_pass.display("low pass");
+  grayscaled_image = convert(image2, "bgr", "gray");
   Image high_pass = PassFilter(grayscaled_image, 50, HIGH_PASS_FILTER);
   high_pass.display("high pass");
 
+  // part 10) hyprid images
+  // images should be the same size and on channel
+  Image image1 = Image("D:\\sbme\\fourth year\\second term\\CV\\projects\\cv-project-1\\images\\snake1.jpeg");
+  Image grayscaled_image1 = convert(image1, "bgr", "gray");
+  grayscaled_image1.display("image 1");
+  Image image2 = Image("D:\\sbme\\fourth year\\second term\\CV\\projects\\cv-project-1\\images\\snake2.jpeg");
+  Image grayscaled_image2 = convert(image2, "bgr", "gray");
+  grayscaled_image2.display("image 2");
+  Image hyprid = hypridImages(grayscaled_image1, grayscaled_image2);
+  hyprid.display("hyprid");
   return 0;
 }

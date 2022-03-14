@@ -633,7 +633,7 @@ namespace img
         return Image(thresholded_image);
     }
 
-    Image PassFilter(Image &img, float freq_threshold,p_types pass_type)
+    Image PassFilter(Image &img, float freq_threshold, p_types pass_type)
     {
         cv::Mat imgIn = img.mat;
         imgIn.convertTo(imgIn, CV_32F);
@@ -643,7 +643,7 @@ namespace img
 
         // construct H
         cv::Mat H;
-        H = construct_H(imgIn, freq_threshold,pass_type);
+        H = construct_H(imgIn, freq_threshold, pass_type);
 
         // filtering
         cv::Mat complexIH;
@@ -652,6 +652,43 @@ namespace img
         // IDFT
         cv::Mat imgOut;
         cv::dft(complexIH, imgOut, cv::DFT_INVERSE | cv::DFT_REAL_OUTPUT);
+
+        cv::normalize(imgOut, imgOut, 0, 1, cv::NORM_MINMAX);
+        return Image(imgOut);
+    }
+
+    Image hypridImages(Image &img1, Image &img2)
+    {
+        cv::Mat imgIn1 = img1.mat;
+        imgIn1.convertTo(imgIn1, CV_32F);
+
+        cv::Mat imgIn2 = img2.mat;
+        imgIn2.convertTo(imgIn2, CV_32F);
+
+        // DFT
+        cv::Mat DFT_image_1;
+        cv::Mat DFT_image_2;
+        DFT(imgIn1, DFT_image_1);
+        DFT(imgIn2, DFT_image_2);
+
+        // construct H
+        cv::Mat H;
+        cv::Mat L;
+        L = construct_H(imgIn1, 40, HIGH_PASS_FILTER);
+        H = construct_H(imgIn2, 40, LOW_PASS_FILTER);
+
+        // filtering
+        cv::Mat complexIH;
+        filtering(DFT_image_1, complexIH, H);
+        cv::Mat complexIL;
+        filtering(DFT_image_2, complexIL, L);
+
+        cv::Mat hyprid;
+        cv::add(complexIH, complexIL, hyprid);
+
+        // IDFT
+        cv::Mat imgOut;
+        cv::dft(hyprid, imgOut, cv::DFT_INVERSE | cv::DFT_REAL_OUTPUT);
 
         cv::normalize(imgOut, imgOut, 0, 1, cv::NORM_MINMAX);
         return Image(imgOut);
