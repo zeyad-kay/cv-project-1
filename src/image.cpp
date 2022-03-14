@@ -558,9 +558,9 @@ namespace img
                     if (r + 1 <= rows)
                     {
                         // dl = gdl * im->data[((r + 1) * cols) + (c - 1)].i;
-                    // std::cout << "dl" << std::endl;
+                        // std::cout << "dl" << std::endl;
                         dl = gdl * cp.at<uchar>((r + 1), (c - 1));
-                    // std::cout << "end dl" << std::endl;
+                        // std::cout << "end dl" << std::endl;
                     }
                 }
                 if (c + 1 <= cols)
@@ -572,9 +572,9 @@ namespace img
                     if (r - 1 >= 0)
                     {
                         // ur = gur * im->data[((r - 1) * cols) + (c + 1)].i;
-                    // std::cout << "ul" << std::endl;
+                        // std::cout << "ul" << std::endl;
                         ur = gur * cp.at<uchar>((r - 1), (c + 1));
-                    // std::cout << "end ul" << std::endl;
+                        // std::cout << "end ul" << std::endl;
                     }
                     if (r + 1 <= rows)
                     {
@@ -582,7 +582,6 @@ namespace img
                         // std::cout << "dr" << std::endl;
                         dr = gdr * cp.at<uchar>((r + 1), (c + 1));
                         // std::cout << "end dr" << std::endl;
-
                     }
                 }
                 if (r - 1 >= 0)
@@ -632,5 +631,29 @@ namespace img
             }
         }
         return Image(thresholded_image);
+    }
+
+    Image PassFilter(Image &img, float freq_threshold,p_types pass_type)
+    {
+        cv::Mat imgIn = img.mat;
+        imgIn.convertTo(imgIn, CV_32F);
+        // DFT
+        cv::Mat DFT_image;
+        DFT(imgIn, DFT_image);
+
+        // construct H
+        cv::Mat H;
+        H = construct_H(imgIn, freq_threshold,pass_type);
+
+        // filtering
+        cv::Mat complexIH;
+        filtering(DFT_image, complexIH, H);
+
+        // IDFT
+        cv::Mat imgOut;
+        cv::dft(complexIH, imgOut, cv::DFT_INVERSE | cv::DFT_REAL_OUTPUT);
+
+        cv::normalize(imgOut, imgOut, 0, 1, cv::NORM_MINMAX);
+        return Image(imgOut);
     }
 }

@@ -16,6 +16,10 @@ namespace img
         ADAPTIVE_THRESH_MEAN,
         ADAPTIVE_THRESH_GAUSSIAN
     }a_types;
+    typedef enum {
+        LOW_PASS_FILTER,
+        HIGH_PASS_FILTER
+    }p_types;
     class Image
     {
     public:
@@ -44,6 +48,7 @@ namespace img
     Image histogram_equalization(Image &eq_img);
     Image globalThreshold(Image &img, float threshold, float mx_value, t_types thresholdType);
     Image localThreshold(Image &img, float mx_value, t_types thresholdType);
+    Image PassFilter(Image &img, float freq_threshold,p_types pass_type);
 };
 
 #endif
