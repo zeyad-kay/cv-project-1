@@ -35,7 +35,8 @@ $ cmake --build ./build/ --target clean
 
 
 <br>
-## 1. Adding Noise To Image
+
+## 1- Adding Noise To Image
 
 Three types of noise are implemented in this project: Uniform, Gaussian, and Salt & Pepper noise
 
@@ -61,7 +62,8 @@ Three types of noise are implemented in this project: Uniform, Gaussian, and Sal
 ![Salt & Pepper Noise](examples/salt_noise.png)
 
 <br>
-## 2. Image Filtering
+
+## 2- Image Filtering
 
 Three types of noise are implemented in this project: Median, Mean, and Gaussian filters.
 
